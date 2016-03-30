@@ -29,10 +29,18 @@ Lifecycle hooks:
 When expressed an as ES6 `class:`
 - must have an `async init(state)` function
 
-Note that the dependencies passed via `service` are intentionally, are intentially loosely defined as follows:
-- any dependent components therein must be initialised before `start` is invoked
+The dependencies passed via `service` are constrained only as follows:
+- any components therein must be initialised before `start` is invoked
 
-The component factory implementation
+#### Component factory
+
+The component factory implementation is yet to be extracted from various projects into an independent module:
+- https://github.com/evanx/mpush-redis
+- https://github.com/evanx/chronica
+- https://github.com/evanx/redex
+
+The implementation does not exclude the possibly of the application context singleton being passed as the `service` to all components. In this case, the application is relatively unprotected against misbehaving components. The component manager should rather isolate the components, to minimise globally mutable state.
+
 
 ### ES2016
 
