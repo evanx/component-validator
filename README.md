@@ -47,7 +47,7 @@ The implementation does not exclude the possibly of the application context sing
 
 Expressed as an ES6 `class` with ES'16 `async` functions:
 ```javascript
-export default HelloComponent {
+export default class HelloComponent {
    async init(state) {
       Object.assign(this, state);
       this.logger.info('hello', this.props);
