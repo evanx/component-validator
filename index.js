@@ -50,7 +50,7 @@ function constructComponent(Class, state) {
 }
 
 function validateComponent(component) {
-   console.info('component', component.name, Object.keys(component));
+   console.info('validateComponent', component.name, Object.keys(component));
    if (!component) {
       throw 'component: empty';
    }
