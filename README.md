@@ -124,7 +124,21 @@ WORK IN PROGRESS
 
 ### Implementation
 
-TODO
+```javascript
+function validateComponent(component) {
+   console.info('component', component.name, Object.keys(component));
+   if (!component) {
+      throw 'component: empty';
+   }
+   if (typeof component.start !== 'function') {
+      throw 'component: start';
+   }
+   if (typeof component.end !== 'function') {
+      throw 'component: end';
+   }
+   console.info('ok', component.name);
+}
+```
 
 ### Installation
 
@@ -133,12 +147,41 @@ git clone https://github.com/evanx/component-validator
 cd component-validator
 npm install
 ```
-TODO We validate a component on Github as follows:
+
+#### Validating a component initialising function
+
+We validate a component on Github as follows:
 ```shell
 npm install https://github.com/evanx/hello-component
 component=hello-component npm start
 ```
 
+We observe the following output.
+```
+validate hello-component
+componentModule function []
+hello
+initPromise Promise
+component [ 'start', 'end' ]
+ok
+```
+
+#### ES6 class example
+
+#### Validating a component initialising function
+
+We validate a component on Github as follows:
+```shell
+npm install https://github.com/evanx/hello-component-class
+component=hello-component-class npm start
+```
+
+We observe the following output.
+```
+hello hello-component-class
+component hello-component-class [ 'name', 'props', 'logger' ]
+ok hello-component-class
+```
 
 ### Further reading
 
