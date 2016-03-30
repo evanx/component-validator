@@ -162,11 +162,11 @@ component=hello-component npm start
 We observe the following output.
 ```
 validate hello-component
-componentModule function []
-hello
+componentModule function true []
+hello { timeout: 60 }
 initPromise Promise
-component [ 'start', 'end' ]
-ok
+validateComponent hello-component [ 'start', 'end', 'name' ]
+ok hello-component
 ```
 
 #### ES6 class example
@@ -182,7 +182,7 @@ component=hello-component-class npm start
 We observe the following output.
 ```
 hello hello-component-class
-component hello-component-class [ 'name', 'props', 'logger' ]
+validateComponent hello-component-class [ 'name', 'props', 'logger' ]
 ok hello-component-class
 ```
 

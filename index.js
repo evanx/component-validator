@@ -45,6 +45,10 @@ var state = {
    logger: logger
 };
 
+function isClass(Class) {
+   return /_class/.test(Function.prototype.toString.call(Class));
+}
+
 function constructComponent(Class, state) {
    return new Class(state);
 }
@@ -53,6 +57,9 @@ function validateComponent(component) {
    console.info('validateComponent', component.name, Object.keys(component));
    if (!component) {
       throw 'component: empty';
+   }
+   if (!component.name) {
+      throw 'component name: empty';
    }
    if (typeof component.start !== 'function') {
       throw 'component: start';
@@ -63,7 +70,7 @@ function validateComponent(component) {
    console.info('ok', component.name);
 }
 
-require("babel-polyfill");
+require('babel-polyfill');
 require('babel-core/register')({ignore: false});
 
 var component;
@@ -71,14 +78,18 @@ var componentModule = require(process.env.componentModule);
 if (componentModule.default) {
    componentModule = componentModule.default;
 }
-console.info('componentModule', typeof componentModule, Object.keys(componentModule));
-if (componentModule.constructor) {
+if (typeof componentModule !== 'function') {
+   throw 'componentModule: ' + typeof componentModule;
+}
+console.log('componentModule', typeof componentModule, isClass(componentModule), Object.keys(componentModule));
+if (isClass(componentModule)) {
    var component = constructComponent(componentModule);
    component.init(state).then(function() {
       validateComponent(component);
    });
-} else if (typeof componentModule === 'function') {
+} else {
    var initPromise = componentModule(state, props, logger, service).then(function(component) {
+      component.name = componentName;
       validateComponent(component);
    }, function(err) {
       console.error(err);
