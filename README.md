@@ -32,6 +32,7 @@ When expressed an as ES6 `class:`
 The dependencies passed via `service` are constrained only as follows:
 - any components therein must be initialised before `start` is invoked
 
+
 #### Component factory
 
 The component factory implementation is yet to be extracted from various projects into an independent module:
@@ -59,7 +60,7 @@ export default HelloComponent {
    }
 }
 ```
-where `logger` et al are provided via the `state` object, which we lazily `Object.assign` into `this.`
+where `logger` et al are provided via the `state` object, which we casually `Object.assign` into `this.`
 
 Expressed as an `async` function:
 ```javascript
@@ -102,13 +103,13 @@ This is invoked to initialise the component with a `state` object containing:
 - `service` - for dependencies e.g. other required components
 
 
-#### `async start()`
+#### `start`
 
 - invoked after this component and its dependencies have been initialised successfully
 - not invoked after `end` (needless to say)
 
 
-#### `async end()`
+#### `end`
 
 - shutdown the component
 
@@ -134,9 +135,10 @@ npm install
 ```
 TODO We validate a component on Github as follows:
 ```shell
-npm install http://github.com/evanx/sample-component
-npm validate sample-component
+npm install https://github.com/evanx/hello-component
+component=hello-component npm start
 ```
+
 
 ### Further reading
 

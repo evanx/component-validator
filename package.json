@@ -1,14 +1,16 @@
 {
-  "name": "component-validator-chronica",
+  "name": "component-validator",
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js | ./node_modules/.bin/bunyan -o short"
+    "start": "node index.js | node_modules/.bin/bunyan -o short"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel-core": "^6.7.2",
+    "babel-preset-stage-0": "^6.5.0",
     "bunyan": "^1.8.0",
     "lodash": "^4.6.1"
   }
