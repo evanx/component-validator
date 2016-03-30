@@ -1,6 +1,5 @@
 
 var assert = require('assert');
-var bunyan = require('bunyan');
 var lodash = require('lodash');
 var os = require('os');
 
@@ -12,7 +11,6 @@ var ValidationError = function() {
   this.message = JSON.stringify(args);
 }
 
-var logger = global.bunyan.createLogger({name: 'entry', level: 'debug'});
+var logger = bunyan.createLogger({name: 'entry', level: 'debug'});
 
 logger.info('start', process.argv);
-

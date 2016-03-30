@@ -1,172 +1,147 @@
 
-# mpush-redis
+## component-validator
 
-Note: the correct repo is: https://github.com/evanx/mpush-redis
+Validate that an `npm` module is a lightweight ES6 "component" of a certain specification, as presented here.
 
-This is a simple Redis-based message-parallelizing microservice. It supports a persistent pubsub setup via Redis lists, e.g. to support parallel task queues.
+### Goal
 
-It is built for NodeJS, using the Babel transpiler to support async/await etc.
+To formalise a basic component model for various projects, for lifecycle management.
 
-In practice, some "publisher" pushes a message onto a Redis list. <b>This service pops those messages, and pushes each message onto multiple lists, one for each subscriber.</b> Each subscriber pops messages from their own dedicated Redis list.
 
-Clearly if a subscriber is offline, its incoming messages are "persistent" since they accumulate in Redis, and are available when the subscriber comes online again.
+### Specification
 
-Incidently, a "subscriber" could be comprised of redundant microservices consuming the same subscription list. Such a system offers resilience and scalability. Clearly the service must be "stateless" in this case, e.g. where its state is externalized (and shared) using Redis.
+A component:
+- is assigned a unique instance name
+- is provided with a set of immutable `props` aka a static configuration
+- is provided with a logger, for convenience
+- is provided with other dependencies via a `service` object
+- is initialised with a `state` object which includes `{name, props, logger, service}`
+- should have specified lifecycle hooks as detailed below
+- all of these lifecycle hooks must return an ES6 `Promise`
+
+Intentionally, the lifecycle hooks can be expressed as ES2016 `async` functions for `await`
+
+Lifecycle hooks:
+- initialise the component
+- `start` function
+- `end` function
+
+When expressed an as ES6 `class:`
+- must have an `async init(state)` function
+
+Note that the dependencies passed via `service` are intentionally, are intentially loosely defined as follows:
+- any dependent components therein must be initialised before `start` is invoked
+
+The component factory implementation
+
+### ES2016
+
+Expressed as an ES6 `class` with ES2916 `async` functions:
+```javascript
+export default HelloComponent {
+   async init(state) {
+      Object.assign(this, state);
+      this.logger.info('hello', this.props);
+   }
+   async start() {
+      this.logger.info('state ready');
+   }
+   async end() {
+      this.logger.info('goodbye');
+   }
+}
+```
+where `logger` et al are provided via the `state` object, which we lazily `Object.assign` into `this.`
+
+Expressed as an `async` function:
+```javascript
+export async function createHelloComponent(state, props, logger) {
+   logger.info('hello', props);
+   return {
+      async start() {
+         logger.info('state ready');
+      },
+      async end() {
+         logger.info('goodbye';      
+      }
+   };
+}
+```
+where for convenience `props` and `logger` are passed as superflous arguments.
+
+Incidently, an ES6 `class` implementation is expressed as an equivalent function as follows:
+```javascript
+export async function createClassComponent(Class, state) {
+   const component = new Class(state);
+   await component.init(state);
+   return component;
+}
+```
+
+### Lifecycle functions
+
+The lifecycle functions:
+- must return an ES6 `Promise`
+- are not necessarily idempotent, insomuch as they are called at most once.
+
+
+#### `init`
+
+This is invoked to initialise the component with a `state` object containing:
+- `name` - the component's unique instance name
+- `logger` - a logger configured with the component's name
+- `props` - the immutable configuration of the component
+- `service` - for dependencies e.g. other required components
+
+
+#### `async start()`
+
+- invoked after this component and its dependencies have been initialised successfully
+- not invoked after `end` (needless to say)
+
+
+#### `async end()`
+
+- shutdown the component
+
+Note that the component should not `end()` itself. Rather it should signal an error via `service.error(this, err).`
+
+The component manager is responsible for ending all components in the event of an error.
 
 
 ### Status
 
-UNSTABLE
-
-This service will be put into production in the coming weeks, and thereafter I will tag a "stable" release.
-
+WORK IN PROGRESS
 
 ### Implementation
 
-This microservice is performs the following Redis operations.
-
-- `brpoplpush` a message from a "publication" list, into a "pending" list.
-- `lpush` the message to multiple "subscription" lists.
-- Finally, remove the message from the "pending" list.
-
-These operations are performed atomically, via Redis `multi.`
-
-Herewith a simplified code snippet for illustration:
-```javascript
-   const message = await this.redisClient.brpoplpushAsync(this.props.in,
-      this.props.pending, this.props.popTimeout);
-   if (message) {
-      const multi = this.redisClient.multi();
-      this.props.out.forEach(out => multi.lpush(out, message));
-      multi.lrem(this.props.pending, -1, message);
-      await multi.execAsync();
-   }
-```
-where we use `bluebird.promisifyAll` which mixes in async functions e.g. `execAsync` et al.
-
-The blocking pop operation has a configured `popTimeout.` It is performed in a loop, until the service is "ended."
-
-Note that the service will shutdown gracefully e.g. in the event of a `SIGTERM` signal. However, it must wait for the blocking operation to complete. Therefore `popTimeout` is the lower-bound of the worse-case shutdown duration.
-
+TODO
 
 ### Installation
 
 ```shell
-git clone https://github.com/evanx/mpush-redis
-cd mpush-redis
+git clone https://github.com/evanx/component-validator
+cd component-validator
 npm install
 ```
-Let's run the demo.
+TODO We validate a component on Github as follows:
 ```shell
-npm run demo
+npm install http://github.com/evanx/sample-component
+npm validate sample-component
 ```
-We see the demo configuration in the logs.
-```shell
-INFO App: config {
-      redis: 'redis://localhost:6379/0',
-      in: 'demo:mpush:in',
-      pending: 'demo:mpush:pending',
-      popTimeout: 10,
-      out: [ 'demo:mpush:out0', 'demo:mpush:out1' ]
-```
-
-#### Blocking pop
-
-From the logs, we deduce that the service performs the following command.
-
-```
-brpoplpush demo:mpush:in demo:mpush:pending 5
-```
-where the blocking pop operation has a configured timeout of 5 seconds (repeated in a infinite loop).
-
-Note that this time determines the duration of a graceful shutdown, because we can only quit when this operation yields.
-
-When the pop yields a message, this service must push this message into the parallel output queues.
-
-
-#### Publish a message
-
-Let's manually test this by pushing an incoming message into `:in`
-
-```shell
-redis-cli lpush demo:mpush:in one
-(integer) 1
-```
-
-From the logs, we deduce that the service performs the following Redis commands.
-```
-lpush demo:mpush:out0 one
-lpush demo:mpush:out1 one
-```
-
-
-#### Check subscription queues
-
-We check that the message is moved to the parallel output queues.
-```shell
-redis-cli lrange demo:mpush:out0 0 -1
-1) "one"
-```
-
-```shell
-redis-cli lrange demo:mpush:out1 0 -1
-1) "one"
-```
-
-
-### Configuration
-
-Specify the configuration file via the `propsFile` environment variable.
-
-```shell
-propsFile=~/config/mpush-redis.js npm start
-```
-
-The specified config file is loaded via `require()` and so can be a `.js` or a `.json` file.
-
-For example the following configuration specifies a `serviceRedis` and `serviceNamespace` to enable "advanced" features e.g. service registration, message timeouts, and other metrics.
-
-```javascript
-module.exports = {
-   redis: 'redis://localhost:6379/0',
-   serviceRedis: 'redis://localhost:6379/1',
-   serviceNamespace: 'demo:mpush',
-   popTimeout: 10,
-   in: 'demo:mpush:in',
-   pending: 'demo:mpush:pending',
-   out: ['demo:mpush:out0', 'demo:mpush:out1'],
-   done: 'demo:mpush:done'
-};
-```
-
-#### Default props
-
-Default values for props are reported in the logs as follows:
-```
-INFO Service:
-    defaultProps {
-      serviceExpire: 60,
-      serviceRenew: 15,
-      serviceCapacity: 10,
-      messageExpire: 60,
-      messageTimeout: 10,
-      messageCapacity: 1000 }
-```
-
-Note that the `service*` and `message*` props are only required if the `serviceNamespace` is set.
-
 
 ### Further reading
-
-Service lifecycle management: https://github.com/evanx/mpush-redis/blob/master/service.md
-
-Message lifecycle management, for timeouts etc: https://github.com/evanx/mpush-redis/blob/master/message.md
-
-Metrics, for timeouts etc: https://github.com/evanx/mpush-redis/blob/master/metrics.md
 
 Related projects and further plans: https://github.com/evanx/mpush-redis/blob/master/related.md
 
 
+#### Chronica
+
+My "monitoring" project has similar component model: https://github.com/evanx/chronica
+
+Especially see its `ComponentFactory` documentation: https://github.com/evanx/chronica/blob/master/lib/ComponentFactory.md
+
+
 #### Redex
 
-While this repo presents a standalone utility for a specific requirement, it is conceptually related to my "Redex" framework for Redis-based messaging - see https://github.com/evanx/redex.
+My "Redex" framework for Redis-based messaging as a similar component model: https://github.com/evanx/redex
