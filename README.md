@@ -181,6 +181,8 @@ component=hello-component-class npm start
 
 We observe the following output.
 ```
+validate hello-component-class
+componentModule function true []
 hello hello-component-class
 validateComponent hello-component-class [ 'name', 'props', 'logger' ]
 ok hello-component-class
