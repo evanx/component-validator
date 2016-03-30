@@ -1,0 +1,15 @@
+{
+  "name": "component-validator-chronica",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js | ./node_modules/.bin/bunyan -o short"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bunyan": "^1.8.0",
+    "lodash": "^4.6.1"
+  }
+}
