@@ -44,7 +44,7 @@ The implementation does not exclude the possibly of the application context sing
 
 ### ES2016
 
-Expressed as an ES6 `class` with ES2916 `async` functions:
+Expressed as an ES6 `class` with ES'16 `async` functions:
 ```javascript
 export default HelloComponent {
    async init(state) {
