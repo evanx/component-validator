@@ -100,7 +100,7 @@ The lifecycle functions:
 - are not necessarily idempotent, insomuch as they are called at most once
 
 
-#### `init`
+#### `init({name, logger, props, metrics, service})`
 
 This is called to initialise the component with a `state` object containing:
 - `name` - the component's unique instance name
@@ -110,20 +110,19 @@ This is called to initialise the component with a `state` object containing:
 - `service` - for dependencies e.g. other required components
 
 
-#### `start`
+#### `start()`
 
 - called after this component and its dependencies have been initialised successfully
 - perhaps needless to say, not called after `end`
 
 
-#### `end`
+#### `end()`
 
 - "end" the component, for a graceful system exit.
 
 Note that the component should not `end()` itself. Rather it should signal an error via `service.error(this, err).`
 
 The component manager is responsible for ending all components in the event of an error.
-
 
 
 ### Implementation
