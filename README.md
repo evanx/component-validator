@@ -122,7 +122,7 @@ This is called to initialise the component with a `state` object containing:
 
 Note that the component should not `end()` itself. Rather it should signal an error via `service.error(this, err).`
 
-The component manager is responsible for ending all components in the event of an error.
+The component supervisor is responsible for ending all components in the event of an error.
 
 
 ### Implementation
