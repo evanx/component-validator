@@ -51,6 +51,12 @@ export async function createHelloComponent(state, props, logger) {
 ```
 where for convenience `props` and `logger` are passed as superfluous arguments, for easy reference in the closure.
 
+Alternatively they can be destructed from `state` as follows:
+```javascript
+export async function createHelloComponent({props, logger}) {
+   logger.info('hello', props);
+```
+
 Incidently, an ES6 `class` implementation is expressed as an equivalent function as follows:
 ```javascript
 export async function createClassComponent(Class, state) {
