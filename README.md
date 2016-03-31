@@ -5,7 +5,7 @@ Validate that an `npm` module is a lightweight ES6 "component" of a certain spec
 
 ### Goal
 
-To formalise a basic component model for various projects, for lifecycle management.
+To formalise a basic component model across some of my Node projects, for configuration and lifecycle management.
 
 
 ### Specification
@@ -13,6 +13,7 @@ To formalise a basic component model for various projects, for lifecycle managem
 A component:
 - is assigned a unique instance name
 - is provided with a set of immutable `props` aka a static configuration
+- its props should be defaulted and validated by the component factory
 - is provided with a logger, for convenience
 - is provided with other dependencies via a `service` object
 - is initialised with a `state` object which includes `{name, props, logger, service}`
@@ -41,6 +42,41 @@ The component factory implementation is yet to be extracted from various project
 - https://github.com/evanx/redex
 
 The implementation does not exclude the possibly of the application context singleton being passed as the `service` to all components. In this case, the application is relatively unprotected against misbehaving components. The component manager should rather isolate the components, to minimise globally mutable state.
+
+##### Configuration
+
+Modules should define invariants e.g. `HelloComponent.invariants.yaml`
+```yaml
+props:
+   redis:
+      type: url
+      defaultValue: redis://localhost:6379/0
+   message:
+      defaultValue: Hello, World
+   started:
+      type: timestamp
+   timeout:
+      type: interval
+      unit: seconds
+      defaultValue: 10
+      min: 1
+      max: 30
+```
+where this metadata is used by the component factory to default and/or validate props.
+
+Similarly, `service` dependencies should be declared:
+```
+service:
+   metrics:
+      type: component
+      optional: true
+   redisClient:
+      type: object
+```
+
+The component factory should:
+- validate the `service` requirements before calling `init`
+- initialise any required `service` components before calling `start()`
 
 
 ### ES2016
