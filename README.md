@@ -5,7 +5,7 @@ Validate that an `npm` module is a lightweight ES2016 "component" according to t
 
 ### Goal
 
-I wish to formalise a basic component model for some of my Node projects, where I find myself re-implementing the same framework, which I wish to abstract here, and implement later. It handles configuration and lifecycle management sufficiently for my purposes.
+I wish to formalise a basic component model for some of my Node projects, where I find myself re-implementing the same framework, which I wish to abstract here, and implement as a re-usable module. It handles configuration and lifecycle management sufficiently for my purposes.
 
 This component model must enable:
 - graceful system exit
