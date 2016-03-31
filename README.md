@@ -51,7 +51,7 @@ export async function createHelloComponent(state, props, logger) {
 ```
 where for convenience `props` and `logger` are passed as superfluous arguments, for easy reference in the closure.
 
-Alternatively they can be destructed from `state` as follows:
+Alternatively they can be destructured from `state` as follows:
 ```javascript
 export async function createHelloComponent({props, logger}) {
    logger.info('hello', props);
