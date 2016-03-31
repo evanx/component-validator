@@ -20,7 +20,7 @@ exports.default = function () {
                               while (1) {
                                  switch (_context.prev = _context.next) {
                                     case 0:
-                                       logger.info('state ready');
+                                       logger.info('system ready');
 
                                     case 1:
                                     case 'end':

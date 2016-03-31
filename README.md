@@ -175,7 +175,7 @@ We observe the following output.
 loadModule hello-component
 hello { audience: 'world' }
 validateComponent hello-component [ 'start', 'end', 'name' ]
-state ready
+system ready
 goodbye
 OK hello-component
 OK module loaded
@@ -197,7 +197,7 @@ We observe the following output.
 loadModule hello-component-class
 hello hello-component-class
 validateComponent hello-component-class [ 'name', 'props', 'logger', 'metrics', 'service' ]
-state ready hello-component-class
+system ready hello-component-class
 goodbye
 OK hello-component-class
 OK module loaded
