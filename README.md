@@ -7,7 +7,7 @@ Validate that an `npm` module is a lightweight ES6 "component" of a certain spec
 
 I wish to formalise a basic component model for some of my Node projects. I find myself re-implementing the same framework, which I wish to abstract and re-use. It handles configuration and lifecycle management sufficiently for my purposes.
 
-Hopefully it will satisfy my requirements for "plugin" repos in are expressed in ES2016. As demonstrated here, we currently `npm install` "3rd-party" modules, and use `babel` to transpile them into `build/,` as I'm have not yet applied Babel successfully for `node_modules/.`
+Hopefully it will satisfy my requirements for "plugins" expressed in ES2016. As demonstrated here, we currently `npm install` "3rd-party" modules, and use Babel to transpile them into `build/.` I'm have not yet applied Babel successfully for `node_modules/.`
 
 ### Specification
 
