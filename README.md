@@ -295,7 +295,7 @@ Incidently, Redex calls its components "processors," because they handle message
 
 ##### Chronica
 
-Especially see its `ComponentFactory` documentation: https://github.com/evanx/chronica/blob/master/lib/ComponentFactory.md
+See its `ComponentFactory` documentation: https://github.com/evanx/chronica/blob/master/lib/ComponentFactory.md
 
 
 ### Further reading
