@@ -1,19 +1,19 @@
 
 ## component-validator
 
-Validate that an `npm` module is a lightweight ES2016 "component" according to the specification proposed here.
-
-We must support:
-- graceful system exit
-- 3rd-party "plugin" components
-- convenient configuration
-- minimum boilerplate
+Validate that an `npm` module is a lightweight ES2016 "component" according to the lifecycle specification proposed further below.
 
 ### Goal
 
-I wish to formalise a basic component model for some of my Node projects. I find myself re-implementing the same framework, which I wish to abstract and re-use. It handles configuration and lifecycle management sufficiently for my purposes.
+I wish to formalise a basic component model for some of my Node projects, where I find myself re-implementing the same framework, which I wish to abstract here, and implement later. It handles configuration and lifecycle management sufficiently for my purposes.
 
-Hopefully it will satisfy my requirements for "plugins" expressed in ES2016. As demonstrated here, we currently `npm install` "3rd-party" modules, and use Babel to transpile them into `build/.` I've not yet applied Babel successfully for `node_modules/.`
+This component model must enable:
+- graceful system exit
+- 3rd-party "plugin" components e.g. from independent repos on Github
+- minimum boilerplate code
+- convenient configuration
+
+The implementation must satisfy my requirements for "plugins" expressed in ES2016. As demonstrated here, we currently `npm install` "3rd-party" modules, and use Babel to transpile them into `build/` - as I've not yet applied Babel successfully for `node_modules/.`
 
 
 ### ES2016
