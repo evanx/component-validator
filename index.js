@@ -16,6 +16,12 @@ if (!process.env.componentModule) {
 require('babel-polyfill');
 require('babel-core/register')({ignore: false});
 
-const Component = require('./Component').default;
+const Component = require('./Component');
 
-Component.loadModule(process.env.componentModule);
+//console.log('Component', typeof Component, Object.keys(Component), typeof Component.loadModule);
+
+Component.loadModule(process.env.componentModule).then(function() {
+   console.info('OK module loaded');
+}).catch(function(err) {
+   console.info(err);
+});

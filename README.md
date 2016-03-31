@@ -206,27 +206,10 @@ npm install
 We validate a component on Github as follows:
 ```shell
 npm install https://github.com/evanx/hello-component
-component=hello-component npm start
+node_modules/.bin/babel node_modules/hello-component/index.js -o build/hello-component.js
+componentModule=hello-component npm start
 ```
-
-We observe the following output.
-```
-validate hello-component
-hello { audience: 'world' }
-initPromise Promise
-validateComponent hello-component [ 'start', 'end', 'name' ]
-ok hello-component
-```
-
-#### ES6 class example
-
-#### Validating a component initialising function
-
-We validate a component on Github as follows:
-```shell
-npm install https://github.com/evanx/hello-component-class
-component=hello-component-class npm start
-```
+where we build the component with `babel` as a workaround to some Babel issues I'm experiencing with ES2016 `node_modules.`
 
 We observe the following output.
 ```
@@ -236,6 +219,46 @@ validateComponent hello-component [ 'start', 'end', 'name' ]
 state ready
 goodbye
 OK hello-component
+OK module loaded
+```
+
+#### ES6 class example
+
+We validate a component on Github as follows:
+```shell
+npm install https://github.com/evanx/hello-component-class
+node_modules/.bin/babel node_modules/hello-component-class/index.js -o build/hello-component-class.js
+componentModule=hello-component-class npm start
+```
+
+We observe the following output.
+```
+loadModule hello-component-class
+hello hello-component-class
+validateComponent hello-component-class [ 'name', 'props', 'logger', 'metrics', 'service' ]
+state ready hello-component-class
+goodbye
+OK hello-component-class
+OK module loaded
+```
+
+#### Demo script
+
+See `scripts/hello/sh:`
+```shell
+c2import() {
+  component=$1
+  url=$2
+  echo; echo $component
+  npm install $url
+  node_modules/.bin/babel node_modules/$component/index.js -o build/hello-component-class.js
+  componentModule=$component npm start
+}
+```
+We invoke the function for our test components as follows:
+```
+c2import hello-component-class https://github.com/evanx/hello-component-class
+c2import hello-component https://github.com/evanx/hello-component
 ```
 
 ### Further reading
