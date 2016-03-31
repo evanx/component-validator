@@ -70,6 +70,7 @@ export async function createClassComponent(classConstructor, state) {
 ```
 where the `state` is passed to the constructor, but also to `init.` The component might choose to perform some initialisation in its constructor, where `await` is not required.
 
+
 ##### Configuration
 
 Modules should declare invariants e.g. `HelloComponent.invariants.yaml`
