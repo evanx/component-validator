@@ -68,7 +68,7 @@ export async function createClassComponent(classConstructor, state) {
    return component;
 }
 ```
-where the `state` is passed to the constructor, but also to `init.` The component might choose to perform some initialisation in its constructor, where `await` is not required.
+where the `state` is passed to the constructor, and also to its `async init` function. The component might choose to perform some initialisation in its constructor, e.g. where `await` is not required.
 
 
 ##### Configuration
