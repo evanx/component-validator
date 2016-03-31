@@ -143,7 +143,7 @@ The component should not `end()` itself or other components. Rather it should si
 
 
 
-### Implementation
+### Component Vallidator implementation
 
 ```javascript
 function validateComponent(component) {
