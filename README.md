@@ -13,6 +13,7 @@ STATUS: DESIGN STAGE
 
 The component supervisor singleton:
 - initialises each required component as per a system configuration.
+- has providers to transform a specific system configuration into constituent component configurations.
 - advises components to `start` when the the system is ready i.e. all components have been initialised
 - initiates a graceful shutdown of all components
 - supports multiple instances of the same component
