@@ -135,7 +135,9 @@ export async function createClassComponent(Class, state) {
 
 The lifecycle functions:
 - must return an ES6 `Promise`
-- must be called by the supervisor only, at most once
+- should resolve/reject within a timeout e.g. 10 seconds
+- must be called at most once
+- must be called by the supervisor only
 - are not necessarily idempotent, insomuch as they are called at most once
 
 
