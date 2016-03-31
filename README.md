@@ -9,6 +9,51 @@ I wish to formalise a basic component model for some of my Node projects. I find
 
 Hopefully it will satisfy my requirements for "plugins" expressed in ES2016. As demonstrated here, we currently `npm install` "3rd-party" modules, and use Babel to transpile them into `build/.` I've not yet applied Babel successfully for `node_modules/.`
 
+
+### ES2016
+
+Expressed as an ES6 `class` with ES'16 `async` functions:
+```javascript
+export default class HelloComponent {
+   async init(state) {
+      Object.assign(this, state);
+      this.logger.info('hello', this.props);
+   }
+   async start() {
+      this.logger.info('system initialised');
+   }
+   async end() {
+      this.logger.info('goodbye');
+   }
+}
+```
+where `logger` et al are provided via the `state` object, which we casually `Object.assign` into `this.`
+
+Expressed as an `async` function:
+```javascript
+export async function createHelloComponent(state, props, logger) {
+   logger.info('hello', props);
+   return {
+      async start() {
+         logger.info('system initialised');
+      },
+      async end() {
+         logger.info('goodbye';      
+      }
+   };
+}
+```
+where for convenience `props` and `logger` are passed as superfluous arguments.
+
+Incidently, an ES6 `class` implementation is expressed as an equivalent function as follows:
+```javascript
+export async function createClassComponent(Class, state) {
+   const component = new Class(state);
+   await component.init(state);
+   return component;
+}
+```
+
 ### Specification
 
 STATUS: DESIGN STAGE
@@ -90,50 +135,6 @@ The component supervisor must:
 - validate the `service` requirements before calling `init(state)`
 - initialise dependent components in `service` before calling `start()`
 
-
-### ES2016
-
-Expressed as an ES6 `class` with ES'16 `async` functions:
-```javascript
-export default class HelloComponent {
-   async init(state) {
-      Object.assign(this, state);
-      this.logger.info('hello', this.props);
-   }
-   async start() {
-      this.logger.info('system initialised');
-   }
-   async end() {
-      this.logger.info('goodbye');
-   }
-}
-```
-where `logger` et al are provided via the `state` object, which we casually `Object.assign` into `this.`
-
-Expressed as an `async` function:
-```javascript
-export async function createHelloComponent(state, props, logger) {
-   logger.info('hello', props);
-   return {
-      async start() {
-         logger.info('system initialised');
-      },
-      async end() {
-         logger.info('goodbye';      
-      }
-   };
-}
-```
-where for convenience `props` and `logger` are passed as superfluous arguments.
-
-Incidently, an ES6 `class` implementation is expressed as an equivalent function as follows:
-```javascript
-export async function createClassComponent(Class, state) {
-   const component = new Class(state);
-   await component.init(state);
-   return component;
-}
-```
 
 ### Lifecycle functions
 
