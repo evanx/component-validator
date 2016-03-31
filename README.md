@@ -82,11 +82,9 @@ service:
       optional: true
 ```
 
-The component supervisor should:
+The component supervisor must:
 - validate the `service` requirements before calling `init(state)`
-- initialise required `service` components (as specified here) before calling `start()`
-
-Usually `service` includes components by our definition here, where we typically want to initialise all required components first, and then call `start()` to advise the component that the system is ready.
+- initialise dependent components in `service` before calling `start()`
 
 
 ### ES2016
