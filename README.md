@@ -168,6 +168,8 @@ componentModule=hello-component npm start
 ```
 where we build the component with `babel` as a workaround to some Babel issues I'm experiencing with ES2016 `node_modules.`
 
+See: https://github.com/evanx/hello-component
+
 We observe the following output.
 ```
 loadModule hello-component
@@ -187,6 +189,8 @@ npm install https://github.com/evanx/hello-component-class
 node_modules/.bin/babel node_modules/hello-component-class/index.js -o build/hello-component-class.js
 componentModule=hello-component-class npm start
 ```
+
+See: https://github.com/evanx/hello-component
 
 We observe the following output.
 ```
