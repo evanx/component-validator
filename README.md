@@ -55,6 +55,7 @@ Alternatively they can be destructed from `state` as follows:
 ```javascript
 export async function createHelloComponent({props, logger}) {
    logger.info('hello', props);
+   ...
 ```
 
 Incidently, an ES6 `class` implementation is expressed as an equivalent function as follows:
