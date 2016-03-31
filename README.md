@@ -184,15 +184,14 @@ function validateComponent(component) {
       throw 'component: end';
    }
    if (/^hello-component/.test(component.name)) {
-      await component.start();
-      await component.end();
+      await lifecyleTimeout(component.start());
+      await lifecyleTimeout(component.end());
    }
    console.info('OK', component.name);
 }
 ```
 
 However, we do not generally validate that the lifecycle functions return a `Promise` - except on our specific test cases e.g. `hello-component` and `hello-component-class.`
-
 
 ### Installation
 
