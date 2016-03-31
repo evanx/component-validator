@@ -55,9 +55,7 @@ Alternatively they can be destructed from `state` as follows:
 ```javascript
 export async function createHelloComponent({props, logger}) {
    logger.info('hello', props);
-   const component = {
-      ...
-   };
+   ...
    return component;
 }
 ```
