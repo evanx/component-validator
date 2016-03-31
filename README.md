@@ -135,7 +135,7 @@ This is called to initialise the component with a `state` object containing:
 
 #### `end()`
 
-- "end" the component, for a graceful system exit.
+- "end" the component e.g. for a graceful system exit.
 
 Note that the component should not `end()` itself. Rather it should signal an error via `service.error(this, err).`
 
