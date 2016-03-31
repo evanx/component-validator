@@ -12,11 +12,12 @@ I wish to formalise a basic component model for some of my Node projects. I find
 STATUS: DESIGN STAGE
 
 The component supervisor singleton:
-- initialises each required component as per a system configuration.
-- has providers to transform a specific system configuration into constituent component configurations.
+- supports system configuration "transforms" to provide constituent component configurations.
+- initialises each required component as per its derived configuration.
 - advises components to `start` when the the system is ready i.e. all components have been initialised
 - initiates a graceful shutdown of all components
 - supports multiple instances of the same component
+- supports scheduling component tasks at various times and/or intervals
 
 A component
 - is assigned a name e.g. for configuration and logging
