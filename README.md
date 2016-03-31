@@ -5,43 +5,49 @@ Validate that an `npm` module is a lightweight ES6 "component" of a certain spec
 
 ### Goal
 
-To formalise a basic component model across some of my Node projects, for configuration and lifecycle management.
-
+I wish to formalise a basic component model for some of my Node projects. I find myself re-implementing the same framework, which I wish to abstract and re-use. It handles configuration and lifecycle management sufficiently for my purposes.
 
 ### Specification
 
-A component:
-- is assigned a unique instance name
-- is provided with a set of immutable `props` aka a static configuration
-- its props should be defaulted and validated by the component factory
-- is provided with a logger, for convenience
+STATUS: DESIGN STAGE
+
+The component supervisor singleton:
+- initialises each required component as per a system configuration.
+- advises components to `start` when the the system is ready i.e. all components have been initialised
+- initiates a graceful shutdown of all components
+- supports multiple instances of the same component
+
+A component
+- is assigned a name e.g. for configuration and logging
+- is provided with a logger
+- is provided with a metrics aggregator
+- is configured with a set of `props` which must be considered immutable
 - is provided with other dependencies via a `service` object
-- is initialised with a `state` object which includes `{name, props, logger, service}`
-- should have specified lifecycle hooks as detailed below
-- all of these lifecycle hooks must return an ES6 `Promise`
+- is initialised with a `state` object which includes `{name, props, logger, service, metrics}`
+- has lifecycle hooks including `start` and `end`
 
-Intentionally, the lifecycle hooks can be expressed as ES2016 `async` functions for `await`
+<b>The lifecycle hooks must return an ES6 `Promise` so that they can be expressed as ES2016 `async` functions for `await`</b>
 
-Lifecycle hooks:
-- initialise the component
-- `start` function
-- `end` function
+When a component is expressed as an ES6 `class,` the following three functions are required:
+- `init(state)`
+- `start()`
+- `end()`
 
-When expressed an as ES6 `class:`
-- must have an `async init(state)` function
+Alternatively when an `async function(state)` creates and initialises the component, it must return an object with `start()` and `end()` but not `init(state)`
 
 The dependencies passed via `service` are constrained only as follows:
-- any components therein must be initialised before `start` is invoked
+- any components therein must be initialised before `start()` is called
 
 
 #### Component factory
 
-The component factory implementation is yet to be extracted from various projects into an independent module:
+Note that the component factory implementation is yet to be refactored into an independent module as per this spec, from the following of my projects:
 - https://github.com/evanx/mpush-redis
 - https://github.com/evanx/chronica
 - https://github.com/evanx/redex
 
-The implementation does not exclude the possibly of the application context singleton being passed as the `service` to all components. In this case, the application is relatively unprotected against misbehaving components. The component manager should rather isolate the components, to minimise globally mutable state.
+Incidently, Redex calls its components "processors," because they handle messages.
+
 
 ##### Configuration
 
@@ -75,8 +81,10 @@ service:
 ```
 
 The component factory should:
-- validate the `service` requirements before calling `init`
-- initialise any required `service` components before calling `start()`
+- validate the `service` requirements before calling `init(state)`
+- initialise required `service` components (as specified here) before calling `start()`
+
+Usually `service` includes components by our definition here, where we typically want to initialise all required components first, and then call `start()` to advise the component that the system is ready.
 
 
 ### ES2016
@@ -89,7 +97,7 @@ export default class HelloComponent {
       this.logger.info('hello', this.props);
    }
    async start() {
-      this.logger.info('state ready');
+      this.logger.info('system initialised');
    }
    async end() {
       this.logger.info('goodbye');
@@ -104,7 +112,7 @@ export async function createHelloComponent(state, props, logger) {
    logger.info('hello', props);
    return {
       async start() {
-         logger.info('state ready');
+         logger.info('system initialised');
       },
       async end() {
          logger.info('goodbye';      
@@ -112,7 +120,7 @@ export async function createHelloComponent(state, props, logger) {
    };
 }
 ```
-where for convenience `props` and `logger` are passed as superflous arguments.
+where for convenience `props` and `logger` are passed as superfluous arguments.
 
 Incidently, an ES6 `class` implementation is expressed as an equivalent function as follows:
 ```javascript
@@ -127,36 +135,35 @@ export async function createClassComponent(Class, state) {
 
 The lifecycle functions:
 - must return an ES6 `Promise`
-- are not necessarily idempotent, insomuch as they are called at most once.
+- must be called by the supervisor only, at most once
+- are not necessarily idempotent, insomuch as they are called at most once
 
 
 #### `init`
 
-This is invoked to initialise the component with a `state` object containing:
+This is called to initialise the component with a `state` object containing:
 - `name` - the component's unique instance name
 - `logger` - a logger configured with the component's name
+- `metrics` - a metrics aggregator configured with the component's name
 - `props` - the immutable configuration of the component
 - `service` - for dependencies e.g. other required components
 
 
 #### `start`
 
-- invoked after this component and its dependencies have been initialised successfully
-- not invoked after `end` (needless to say)
+- called after this component and its dependencies have been initialised successfully
+- perhaps needless to say, not called after `end`
 
 
 #### `end`
 
-- shutdown the component
+- "end" the component, for a graceful system exit.
 
 Note that the component should not `end()` itself. Rather it should signal an error via `service.error(this, err).`
 
 The component manager is responsible for ending all components in the event of an error.
 
 
-### Status
-
-WORK IN PROGRESS
 
 ### Implementation
 
@@ -172,7 +179,7 @@ function validateComponent(component) {
    if (typeof component.end !== 'function') {
       throw 'component: end';
    }
-   console.info('ok', component.name);
+   console.info('OK', component.name);
 }
 ```
 
@@ -198,8 +205,7 @@ component=hello-component npm start
 We observe the following output.
 ```
 validate hello-component
-componentModule function true []
-hello { timeout: 60 }
+hello { audience: 'world' }
 initPromise Promise
 validateComponent hello-component [ 'start', 'end', 'name' ]
 ok hello-component
@@ -217,11 +223,12 @@ component=hello-component-class npm start
 
 We observe the following output.
 ```
-validate hello-component-class
-componentModule function true []
-hello hello-component-class
-validateComponent hello-component-class [ 'name', 'props', 'logger' ]
-ok hello-component-class
+loadModule hello-component
+hello { audience: 'world' }
+validateComponent hello-component [ 'start', 'end', 'name' ]
+state ready
+goodbye
+OK hello-component
 ```
 
 ### Further reading
