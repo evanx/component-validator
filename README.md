@@ -263,7 +263,7 @@ A component
 - is initialised with a `state` object which includes `{name, props, logger, service, metrics}`
 - has lifecycle hooks including `start` and `end`
 
-<b>The lifecycle hooks must return an ES6 `Promise` so that they can be expressed as ES2016 `async` functions for `await.`</b>
+The lifecycle hooks must return an ES6 `Promise` so that they can be expressed as ES2016 `async` functions for `await.`
 
 When a component is expressed as an ES6 `class,` the following three functions are required:
 - `init(state)`
