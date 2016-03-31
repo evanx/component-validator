@@ -137,9 +137,10 @@ This is called to initialise the component with a `state` object containing:
 
 - "end" the component e.g. for a graceful system exit.
 
-Note that the component should not `end()` itself or other components. Rather it should signal an error via `service.error(this, err).`
-
 The component supervisor is responsible for ending all components in the event of an error.
+
+The component should not `end()` itself or other components. Rather it should signal an error via `service.error(this, err).`
+
 
 
 ### Implementation
