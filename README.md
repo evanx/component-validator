@@ -12,8 +12,10 @@ I wish to formalise a basic component model for some of my Node projects. I find
 STATUS: DESIGN STAGE
 
 The component supervisor singleton:
+- supports declarative defaults of system and component configuration properties.
+- supports declarative validation of properties.
 - supports system configuration "transforms" to provide constituent component configurations.
-- initialises each required component as per its derived configuration.
+- initialises each required component as per its required configuration properties and service dependencies.
 - advises components to `start` when the the system is ready i.e. all components have been initialised
 - initiates a graceful shutdown of all components
 - supports multiple instances of the same component
@@ -28,7 +30,7 @@ A component
 - is initialised with a `state` object which includes `{name, props, logger, service, metrics}`
 - has lifecycle hooks including `start` and `end`
 
-<b>The lifecycle hooks must return an ES6 `Promise` so that they can be expressed as ES2016 `async` functions for `await`</b>
+<b>The lifecycle hooks must return an ES6 `Promise` so that they can be expressed as ES2016 `async` functions for `await.`</b>
 
 When a component is expressed as an ES6 `class,` the following three functions are required:
 - `init(state)`
@@ -43,7 +45,7 @@ The dependencies passed via `service` are constrained only as follows:
 
 #### Component supervisor
 
-Note that the component supervisor implementation is yet to be implemented as per this spec, drawing from the following of my projects:
+Note that the component supervisor implementation is yet to be implemented as per this spec, drawing from similar work in the following of my projects:
 - https://github.com/evanx/mpush-redis
 - https://github.com/evanx/chronica
 - https://github.com/evanx/redex
@@ -53,7 +55,7 @@ Incidently, Redex calls its components "processors," because they handle message
 
 ##### Configuration
 
-Modules should define invariants e.g. `HelloComponent.invariants.yaml`
+Modules should declare invariants e.g. `HelloComponent.invariants.yaml`
 ```yaml
 props:
    redis:
@@ -70,7 +72,7 @@ props:
       min: 1
       max: 30
 ```
-where this metadata is used by the component supervisor to default and/or validate props.
+where this metadata is used by the component supervisor to default and validate props.
 
 Similarly, `service` dependencies should be declared:
 ```
