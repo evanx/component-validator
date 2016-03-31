@@ -41,9 +41,9 @@ The dependencies passed via `service` are constrained only as follows:
 - any components therein must be initialised before `start()` is called
 
 
-#### Component factory
+#### Component supervisor
 
-Note that the component factory implementation is yet to be implemented as per this spec, drawing from the following of my projects:
+Note that the component supervisor implementation is yet to be implemented as per this spec, drawing from the following of my projects:
 - https://github.com/evanx/mpush-redis
 - https://github.com/evanx/chronica
 - https://github.com/evanx/redex
@@ -70,19 +70,19 @@ props:
       min: 1
       max: 30
 ```
-where this metadata is used by the component factory to default and/or validate props.
+where this metadata is used by the component supervisor to default and/or validate props.
 
 Similarly, `service` dependencies should be declared:
 ```
 service:
    metrics:
       type: component
-      optional: true
    redisClient:
       type: object
+      optional: true
 ```
 
-The component factory should:
+The component supervisor should:
 - validate the `service` requirements before calling `init(state)`
 - initialise required `service` components (as specified here) before calling `start()`
 
