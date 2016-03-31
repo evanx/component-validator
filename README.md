@@ -265,21 +265,21 @@ Note that the component supervisor implementation is yet to be implemented as pe
 - https://github.com/evanx/chronica
 - https://github.com/evanx/redex
 
+##### mpush
+
+See the `Service` supervisor code: https://github.com/evanx/mpush-redis/blob/master/src/Service.js
+
+##### Redex
+
+See code: https://github.com/evanx/redex/blob/master/lib/Redex.js
+
 Incidently, Redex calls its components "processors," because they handle messages.
+
+##### Chronica
+
+Especially see its `ComponentFactory` documentation: https://github.com/evanx/chronica/blob/master/lib/ComponentFactory.md
 
 
 ### Further reading
 
 Related projects and further plans: https://github.com/evanx/mpush-redis/blob/master/related.md
-
-
-#### Chronica
-
-My "monitoring" project has similar component model: https://github.com/evanx/chronica
-
-Especially see its `ComponentFactory` documentation: https://github.com/evanx/chronica/blob/master/lib/ComponentFactory.md
-
-
-#### Redex
-
-My "Redex" framework for Redis-based messaging as a similar component model: https://github.com/evanx/redex
