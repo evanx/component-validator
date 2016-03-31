@@ -184,8 +184,8 @@ function validateComponent(component) {
       throw 'component: end';
    }
    if (/^hello-component/.test(component.name)) {
-      await lifecyleTimeout(component.start());
-      await lifecyleTimeout(component.end());
+      await lifecyleHookTimeout(component.start());
+      await lifecyleHookTimeout(component.end());
    }
    console.info('OK', component.name);
 }
