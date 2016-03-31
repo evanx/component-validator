@@ -190,7 +190,7 @@ node_modules/.bin/babel node_modules/hello-component-class/index.js -o build/hel
 componentModule=hello-component-class npm start
 ```
 
-See: https://github.com/evanx/hello-component
+See: https://github.com/evanx/hello-component-class
 
 We observe the following output.
 ```
