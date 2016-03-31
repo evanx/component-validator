@@ -54,52 +54,6 @@ export async function createClassComponent(Class, state) {
 }
 ```
 
-### Specification
-
-STATUS: DESIGN STAGE
-
-The component supervisor singleton:
-- supports declarative defaults of system and component configuration properties.
-- supports declarative validation of properties.
-- supports system configuration "transforms" to provide constituent component configurations.
-- initialises each required component as per its required configuration properties and service dependencies.
-- advises components to `start` when the the system is ready i.e. all components have been initialised
-- initiates a graceful shutdown of all components
-- supports multiple instances of the same component
-- supports scheduling component tasks at various times and/or intervals
-
-A component
-- is assigned a name e.g. for configuration and logging
-- is provided with a logger
-- is provided with a metrics aggregator
-- is configured with a set of `props` which must be considered immutable
-- is provided with other dependencies via a `service` object
-- is initialised with a `state` object which includes `{name, props, logger, service, metrics}`
-- has lifecycle hooks including `start` and `end`
-
-<b>The lifecycle hooks must return an ES6 `Promise` so that they can be expressed as ES2016 `async` functions for `await.`</b>
-
-When a component is expressed as an ES6 `class,` the following three functions are required:
-- `init(state)`
-- `start()`
-- `end()`
-
-Alternatively when an `async function(state)` creates and initialises the component, it must return an object with `start()` and `end()` but not `init(state)`
-
-The dependencies passed via `service` are constrained only as follows:
-- any components therein must be initialised before `start()` is called
-
-
-#### Component supervisor
-
-Note that the component supervisor implementation is yet to be implemented as per this spec, drawing from similar work in the following of my projects:
-- https://github.com/evanx/mpush-redis
-- https://github.com/evanx/chronica
-- https://github.com/evanx/redex
-
-Incidently, Redex calls its components "processors," because they handle messages.
-
-
 ##### Configuration
 
 Modules should declare invariants e.g. `HelloComponent.invariants.yaml`
@@ -196,6 +150,7 @@ function validateComponent(component) {
 
 However, we do not generally validate that the lifecycle functions return a `Promise` - except on our specific test cases e.g. `hello-component` and `hello-component-class.`
 
+
 ### Installation
 
 ```shell
@@ -263,6 +218,52 @@ We invoke the function for our test components as follows:
 c2import hello-component-class https://github.com/evanx/hello-component-class
 c2import hello-component https://github.com/evanx/hello-component
 ```
+
+### Specification
+
+STATUS: DESIGN STAGE
+
+The component supervisor singleton:
+- supports declarative defaults of system and component configuration properties.
+- supports declarative validation of properties.
+- supports system configuration "transforms" to provide constituent component configurations.
+- initialises each required component as per its required configuration properties and service dependencies.
+- advises components to `start` when the the system is ready i.e. all components have been initialised
+- initiates a graceful shutdown of all components
+- supports multiple instances of the same component
+- supports scheduling component tasks at various times and/or intervals
+
+A component
+- is assigned a name e.g. for configuration and logging
+- is provided with a logger
+- is provided with a metrics aggregator
+- is configured with a set of `props` which must be considered immutable
+- is provided with other dependencies via a `service` object
+- is initialised with a `state` object which includes `{name, props, logger, service, metrics}`
+- has lifecycle hooks including `start` and `end`
+
+<b>The lifecycle hooks must return an ES6 `Promise` so that they can be expressed as ES2016 `async` functions for `await.`</b>
+
+When a component is expressed as an ES6 `class,` the following three functions are required:
+- `init(state)`
+- `start()`
+- `end()`
+
+Alternatively when an `async function(state)` creates and initialises the component, it must return an object with `start()` and `end()` but not `init(state)`
+
+The dependencies passed via `service` are constrained only as follows:
+- any components therein must be initialised before `start()` is called
+
+
+#### Component supervisor
+
+Note that the component supervisor implementation is yet to be implemented as per this spec, drawing from similar work in the following of my projects:
+- https://github.com/evanx/mpush-redis
+- https://github.com/evanx/chronica
+- https://github.com/evanx/redex
+
+Incidently, Redex calls its components "processors," because they handle messages.
+
 
 ### Further reading
 
