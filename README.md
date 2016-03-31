@@ -1,7 +1,13 @@
 
 ## component-validator
 
-Validate that an `npm` module is a lightweight ES6 "component" of a certain specification, as presented here.
+Validate that an `npm` module is a lightweight ES2016 "component" according to the specification proposed here.
+
+We must support:
+- graceful system exit
+- 3rd-party "plugin" components
+- convenient configuration
+- minimum boilerplate
 
 ### Goal
 
