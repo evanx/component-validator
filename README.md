@@ -77,7 +77,7 @@ props:
 where this metadata is used by the component supervisor to default and validate props.
 
 Similarly, `service` dependencies should be declared:
-```
+```yaml
 service:
    metrics:
       type: component
