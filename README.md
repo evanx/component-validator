@@ -9,7 +9,7 @@ I wish to formalise a basic component model for some of my Node projects, where 
 
 This component model must enable:
 - graceful system exit
-- 3rd-party "plugin" components e.g. from independent repos on Github
+- 3rd-party "plugin" components e.g. from independent repos on Github et al
 - minimum boilerplate code
 - convenient configuration
 
@@ -49,7 +49,7 @@ export async function createHelloComponent(state, props, logger) {
    };
 }
 ```
-where for convenience `props` and `logger` are passed as superfluous arguments.
+where for convenience `props` and `logger` are passed as superfluous arguments, for easy reference in the closure.
 
 Incidently, an ES6 `class` implementation is expressed as an equivalent function as follows:
 ```javascript
