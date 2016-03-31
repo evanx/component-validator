@@ -62,12 +62,13 @@ export async function createHelloComponent({props, logger}) {
 
 Incidently, an ES6 `class` implementation is expressed as an equivalent function as follows:
 ```javascript
-export async function createClassComponent(Class, state) {
-   const component = new Class(state);
+export async function createClassComponent(classConstructor, state) {
+   const component = new classConstructor(state);
    await component.init(state);
    return component;
 }
 ```
+where the `state` is passed to the constructor, but also to `init.` The component might choose to perform some initialision 
 
 ##### Configuration
 
