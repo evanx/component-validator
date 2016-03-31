@@ -187,7 +187,7 @@ function validateComponent(component) {
 }
 ```
 
-However, we have not validated that the lifecycle functions return a `Promise` - as we do not wish to call here.
+However, we have not validated that the lifecycle functions return a `Promise` - as we do not wish to call those.
 
 
 ### Installation
