@@ -43,7 +43,7 @@ The dependencies passed via `service` are constrained only as follows:
 
 #### Component factory
 
-Note that the component factory implementation is yet to be refactored into an independent module as per this spec, from the following of my projects:
+Note that the component factory implementation is yet to be implemented as per this spec, drawing from the following of my projects:
 - https://github.com/evanx/mpush-redis
 - https://github.com/evanx/chronica
 - https://github.com/evanx/redex
