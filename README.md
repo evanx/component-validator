@@ -58,19 +58,20 @@ where `props` and `logger` are destructured from the `state` object.
 
 Incidently, an ES6 `class` implementation is expressed as an equivalent function as follows:
 ```javascript
-export async function createClassComponent(classConstructor, state) {
-   const component = new classConstructor(state);
+export async function initComponent(componentClass, state) {
+   const component = new componentClass(state);
    if (typeof component.init === 'function') {
       await component.init(state);
    }
    return component;
 }
 ```
-where the `state` is passed to the constructor also, since the component might choose to perform some initialisation in its constructor. The `init()` function is effectively a complementary ES2016 `async` "constructor."
+where the `state` is passed to the constructor also, since the component might choose to perform some initialisation in its constructor. The `init()` function is effectively a complementary "promisified constructor."
+
 
 ##### Configuration
 
-Modules should declare invariants e.g. `HelloComponent.invariants.yaml`
+Modules should declare validation metadata e.g. via `HelloComponent.invariants.yaml:`
 ```yaml
 props:
    redis:
@@ -95,13 +96,12 @@ service:
    metrics:
       type: component
    redisClient:
-      type: object
       optional: true
 ```
 
 The component supervisor must:
 - validate the `service` requirements before calling `init(state)`
-- initialise dependent components in `service` before calling `start()`
+- initialise required components in `service` before calling `start()`
 
 
 ### Lifecycle functions
