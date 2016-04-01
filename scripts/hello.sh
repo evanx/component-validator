@@ -1,5 +1,5 @@
 
-c2import() {
+c2validateComponent() {
   component=$1
   url=$2
   echo; echo $component
@@ -8,5 +8,5 @@ c2import() {
   componentModule=$component npm start
 }
 
-c2import hello-component-class https://github.com/evanx/hello-component-class
-c2import hello-component https://github.com/evanx/hello-component
+c2validateComponent hello-component-class https://github.com/evanx/hello-component-class
+c2validateComponent hello-component https://github.com/evanx/hello-component

@@ -5,25 +5,30 @@ Validate that an `npm` module is a lightweight ES2016 "component" according to t
 
 ### Goal
 
-I wish to formalise a basic component model for some of my Node projects, where I find myself re-implementing the same framework, which I wish to abstract here, and implement as a re-usable module. It handles configuration and lifecycle management sufficiently for my purposes.
+I wish to formalise a basic component model for some of my Node projects, where I find myself re-implementing the same component framework for configuration and lifecycle management. I wish to abstract a common specification here, and implement this as a re-usable module.
 
-This component model must enable:
-- graceful system exit
-- 3rd-party "plugin" components e.g. from independent repos on Github et al
-- minimum boilerplate code
-- convenient configuration
+This component model must support:
+- third-party plugin components e.g. from independent repos on Github et al.
+- `async` lifecycle functions that should resolve within a configured interval.
+- initialisation of a component with its configuration and dependencies e.g. `init(state).`
+- lifecycle hooks e.g. `start()` and `end()` e.g. for graceful shutdown.
+- ES2016 async/await
+- reduced boilerplate code
 
-The implementation must satisfy my requirements for "plugins" expressed in ES2016. As demonstrated here, we currently `npm install` "3rd-party" modules, and use Babel to transpile them into `build/` - as I've not yet applied Babel successfully for `node_modules/.`
 
+### Components
 
-### ES2016
+The component implements lifecyle `async` functions, so that `await` can be used:
+- initialisation e.g. `init(state)`
+- `start()` when all dependencies have been initialised.
+- `end()` e.g. for system initialisation abort, or later shutdown.
 
 Expressed as an ES6 `class` with ES'16 `async` functions:
 ```javascript
 export default class HelloComponent {
    async init(state) {
       Object.assign(this, state);
-      this.logger.info('hello', this.props);
+      this.logger.info('hello', this.props, Object.keys(this.service));
    }
    async start() {
       this.logger.info('system initialised');
@@ -37,7 +42,7 @@ where `logger` et al are provided via the `state` object, which we casually `Obj
 
 Expressed as an `async` function:
 ```javascript
-export async function createHelloComponent(state, props, logger) {
+export async function createHelloComponent({props, logger}) {
    logger.info('hello', props);
    return {
       async start() {
@@ -49,27 +54,19 @@ export async function createHelloComponent(state, props, logger) {
    };
 }
 ```
-where for convenience `props` and `logger` are passed as superfluous arguments, for easy reference in the closure.
-
-Alternatively they can be destructured from `state` as follows:
-```javascript
-export async function createHelloComponent({props, logger}) {
-   logger.info('hello', props);
-   ...
-   return component;
-}
-```
+where `props` and `logger` are destructured from the `state` object.
 
 Incidently, an ES6 `class` implementation is expressed as an equivalent function as follows:
 ```javascript
 export async function createClassComponent(classConstructor, state) {
    const component = new classConstructor(state);
-   await component.init(state);
+   if (typeof component.init === 'function') {
+      await component.init(state);
+   }
    return component;
 }
 ```
-where the `state` is passed to the constructor, and also to its `async init` function. The component might choose to perform some initialisation in its constructor, e.g. where `await` is not required.
-
+where the `state` is passed to the constructor also, since the component might choose to perform some initialisation in its constructor. The `init()` function is effectively a complementary ES2016 `async` "constructor."
 
 ##### Configuration
 
@@ -111,7 +108,7 @@ The component supervisor must:
 
 The lifecycle functions:
 - must return an ES6 `Promise`
-- should resolve/reject within a timeout e.g. 10 seconds
+- should resolve/reject within a configured timeout e.g. 8 seconds by default.
 - must be called at most once
 - must be called by the supervisor only
 - are not necessarily idempotent, insomuch as they are called at most once
@@ -126,21 +123,25 @@ This is called to initialise the component with a `state` object containing:
 - `props` - the immutable configuration of the component
 - `service` - for dependencies e.g. other required components
 
+Notes:
+- The component might open a network connection here, e.g. to Redis.
 
 #### `start()`
 
 - called after this component and its dependencies have been initialised successfully
-- perhaps needless to say, not called after `end`
 
+Notes:
+- The component might open a network connection here, e.g. to Redis.
 
 #### `end()`
 
-- "end" the component e.g. for a graceful system exit.
+- called to shutdown the component e.g. for a graceful system exit.
 
-The component supervisor is responsible for ending all components in the event of an error.
-
-The component should not `end()` itself or other components. Rather it should signal an error via `service.error(this, err).`
-
+Notes:
+- the component should close any connections here, e.g. so that Node can exit.
+- the component supervisor is responsible for ending all components in the event of an error.
+- the component should not `end()` itself or other components.
+- the component should signal a "fatal" error via `service.error(err, this)` to trigger a shutdown
 
 
 ### Component Vallidator implementation
@@ -225,7 +226,7 @@ OK module loaded
 
 See `scripts/hello/sh:`
 ```shell
-c2import() {
+c2validateComponent() {
   component=$1
   url=$2
   echo; echo $component
@@ -236,8 +237,8 @@ c2import() {
 ```
 We invoke the function for our test components as follows:
 ```
-c2import hello-component-class https://github.com/evanx/hello-component-class
-c2import hello-component https://github.com/evanx/hello-component
+c2validateComponent hello-component-class https://github.com/evanx/hello-component-class
+c2validateComponent hello-component https://github.com/evanx/hello-component
 ```
 
 ### Specification
@@ -246,22 +247,29 @@ STATUS: DESIGN STAGE
 
 The component supervisor singleton:
 - supports declarative defaults of system and component configuration properties.
-- supports declarative validation of properties.
-- supports system configuration "transforms" to provide constituent component configurations.
+- supports declarative validation of customisable properties.
+- supports programmable system configuration "transforms" that provide constituent component configurations.
+- supports using third-party tools such as `gulp` for configuration pipelines
 - initialises each required component as per its required configuration properties and service dependencies.
-- advises components to `start` when the the system is ready i.e. all components have been initialised
+- advises components to `start` when the system is ready e.g. all components have been successfully initialised
 - initiates a graceful shutdown of all components
 - supports multiple instances of the same component
-- supports scheduling component tasks at various times and/or intervals
+- supports scheduling components at various times/intervals
 
 A component
 - is assigned a name e.g. for configuration and logging
 - is provided with a logger
-- is provided with a metrics aggregator
+- is provided with a metrics aggregator e.g. to count events, record averages, peak values, distributions for histograms, etc.
 - is configured with a set of `props` which must be considered immutable
 - is provided with other dependencies via a `service` object
 - is initialised with a `state` object which includes `{name, props, logger, service, metrics}`
 - has lifecycle hooks including `start` and `end`
+
+Incidently, the metrics aggregator:
+- counts events
+- somehow publishes/pushes metrics for monitoring purposes e.g. to Prometheus, Influx, Redis, et al.
+- optionally aggregates values to record the average, peak, and distribution for histograms
+- operates in tandem with the same logger, e.g. generates some logs on behalf of the component.
 
 The lifecycle hooks must return an ES6 `Promise` so that they can be expressed as ES2016 `async` functions for `await.`
 
@@ -270,7 +278,7 @@ When a component is expressed as an ES6 `class,` the following three functions a
 - `start()`
 - `end()`
 
-Alternatively when an `async function(state)` creates and initialises the component, it must return an object with `start()` and `end()` but not `init(state)`
+Alternatively when an `async function(state)` creates and initialises the component, it must return an object with `start()` and `end()` but `init(state)` is not required in this case.
 
 The dependencies passed via `service` are constrained only as follows:
 - any components therein must be initialised before `start()` is called
@@ -287,16 +295,71 @@ Note that the component supervisor implementation is yet to be implemented as pe
 
 See the `Service` supervisor code: https://github.com/evanx/mpush-redis/blob/master/src/Service.js
 
+```javascript
+async initComponent(component) {
+   assert(component.name, 'component name');
+   const name = component.name;
+   logger.info('initComponent', component.name);
+   await component.init({name,
+      logger: this.createLogger(name),
+      props: this.props,
+      components: this.components,
+      service: this
+   });
+   this.initedComponents.push(component);
+   this.components[component.name] = component;
+}
+```
+
 ##### Redex
 
 See code: https://github.com/evanx/redex/blob/master/lib/Redex.js
 
 Incidently, Redex calls its components "processors," because they handle messages.
 
+```javascript
+async endProcessors() {
+   for (let processorName of [...this.initedProcessorKeys]) {
+      let processor = this.processorMap.get(processorName);
+      if (lodash.isFunction(processor.end)) {
+         logger.info('end', processorName);
+         try {
+            await processor.end();
+         } catch (err) {
+            logger.error(err, 'end', processorName);
+         }
+      } else {
+         logger.warn('end', processorName);
+      }
+   }
+}
+```
+
 ##### Chronica
 
 See its `ComponentFactory` documentation: https://github.com/evanx/chronica/blob/master/lib/ComponentFactory.md
 
+```javascript
+async function initComponents() {
+   logger.debug('initComponents', state.componentNames);
+   for (let name of state.componentNames) {
+      assert(!state.components[name], 'unique component: ' + name);
+      let config = rootConfig[name] || {};
+      config.class = config.class || name;
+      let componentClassFile = getClassFile('components', config.class);
+      config = YamlDecorator.decorateClass(componentClassFile, config);
+      if (config.requiredComponents) {
+         config.requiredComponents.forEach(required =>
+               state.requiredComponents.add(required));
+      } else {
+         logger.warn('no requiredComponents', name);
+      }
+      state.configs.set(name, config);
+      let component = createComponent(name, config, componentClassFile);
+      state.components[name] = component;
+   }
+}
+```
 
 ### Further reading
 
