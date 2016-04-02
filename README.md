@@ -186,7 +186,7 @@ Before the supervisor calls a component's `end()` function, it must `clearTimeou
 
 ##### `scheduledInterval()`
 
-Called via `setInterval()` at specified interval.
+Called via `setInterval()` at configured interval.
 
 The supervisor might implement this as follows:
 ```javascript
