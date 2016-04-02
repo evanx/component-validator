@@ -23,6 +23,8 @@ The component implements lifecyle `async` functions, so that `await` can be used
 - `start()` when all dependencies have been initialised.
 - `end()` e.g. for system initialisation abort, or later shutdown.
 
+#### ES6 Class
+
 Expressed as an ES6 `class` with ES'16 `async` functions:
 ```javascript
 export default class HelloComponent {
@@ -39,6 +41,8 @@ export default class HelloComponent {
 }
 ```
 where `logger` et al are provided via the `state` object, which we casually `Object.assign` into `this.`
+
+#### ES2016 async function
 
 Expressed as an `async` function:
 ```javascript
@@ -68,10 +72,9 @@ export async function initComponent(componentClass, state) {
 ```
 where the `state` is passed to the constructor also, since the component might choose to perform some initialisation in its constructor. The `init()` function is effectively a complementary "promisified constructor."
 
+#### Configuration
 
-##### Configuration
-
-Modules should declare validation metadata e.g. via `HelloComponent.invariants.yaml:`
+Component modules should provide validation metadata e.g. `HelloClass.props.yaml`
 ```yaml
 props:
    redis:
@@ -88,7 +91,7 @@ props:
       min: 1
       max: 30
 ```
-where this metadata is used by the component supervisor to default and validate props.
+where these invariants are used by the component supervisor to default and validate props.
 
 Similarly, `service` dependencies should be declared:
 ```yaml
@@ -107,7 +110,7 @@ The component supervisor must:
 ### Lifecycle functions
 
 The lifecycle functions:
-- must return an ES6 `Promise`
+- must return an ES6 `Promise` i.e. to support ES2016 async/await
 - should resolve/reject within a configured timeout e.g. 8 seconds by default.
 - must be called at most once
 - must be called by the supervisor only
@@ -142,6 +145,71 @@ Notes:
 - the component supervisor is responsible for ending all components in the event of an error.
 - the component should not `end()` itself or other components.
 - the component should signal a "fatal" error via `service.error(err, this)` to trigger a shutdown
+
+
+#### Scheduling
+
+For convenience, the supervisor must `setTimeout` and `setInterval` on behalf of a component so configured.
+
+
+##### `scheduledTimeout()`
+
+If a `scheduledTimeout` prop is configured on the component, then this function must be defined.
+
+It is called via `setTimeout()` after a specified timeout period has elapsed since `start()` was resolved.
+
+The supervisor might implement this as follows:
+```javascript
+   scheduleComponentTimeout(component, state) {
+      const {name, props, logger} = state;
+      if (props.scheduledTimeout) {
+         assert(typeof component.scheduledTimeout === 'function', 'scheduledTimeout: ' + name);
+         this.scheduledTimeouts[name] = setTimeout(async () => {
+            try {
+               async component.scheduledTimeout();
+            } catch (err) {               
+               if (props.scheduledTimeoutWarn) {
+                  logger.warn(err, component.name, props);
+               } else {
+                  this.error(err, component);                  
+               }
+            }
+         }, props.scheduledTimeout);
+      }
+   }
+```
+where the component can be configured to just `logger.warn` in event of a `scheduledTimeout` error. This overrides the default behavior, which is system shutdown, as the safest option.
+
+Before the supervisor calls a component's `end()` function, it must `clearTimeout()`
+
+##### `scheduledInterval()`
+
+Called via `setInterval()` at specified interval.
+
+The supervisor might implement this as follows:
+```javascript
+   scheduleComponentInterval(component, state) {
+      const {name, props} = state;
+      if (props.scheduledInterval) {
+         assert(typeof component.scheduledInterval === 'function', 'scheduledInterval: ' + name);
+         this.scheduledIntervals[name] = setInterval(async () => {
+            try {
+               async component.scheduledInterval();
+            } catch (err) {
+               if (props.scheduledIntervalWarn) {
+                  logger.warn(err, component.name, props);
+               } else {
+                  clearInterval(this.scheduledIntervals[name]);
+                  this.error(err, component);                  
+               }
+            }
+         }, props.scheduledInterval);
+      }
+   }
+```
+where the component can be configured to just `logger.warn` in the event of an error. This overrides the default behavior, which is system shutdown, as the safest option.
+
+Before the supervisor calls a component's `end()` function, is must first call `clearInterval()` and later `clearTimeout()` if both are configured.
 
 
 ### Component Vallidator implementation
