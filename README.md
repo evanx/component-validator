@@ -1,9 +1,5 @@
 
-## component-validator
-
-Validate that an `npm` module is a lightweight ES2016 "component" according to the lifecycle specification proposed further below.
-
-### Goal
+## My lightweight ES2016 component specification
 
 I wish to formalise a basic component model for some of my Node projects, where I find myself re-implementing the same component framework for configuration and lifecycle management. I wish to abstract a common specification here, and implement this as a re-usable module.
 
@@ -14,7 +10,6 @@ This component model must support:
 - lifecycle hooks e.g. `start()` and `end()` e.g. for graceful shutdown.
 - ES2016 async/await
 - reduced boilerplate code
-
 
 ### Components
 
@@ -247,108 +242,12 @@ where the component can be configured to just `logger.warn()` in the event of an
 Before the supervisor calls a component's `end()` function, is must first call `clearInterval()` - and later `clearTimeout()` if both are configured.
 
 
-### Component Validator implementation
-
-```javascript
-function validateComponent(component) {
-   console.info('validateComponent', component.name, Object.keys(component));
-   if (!component) {
-      throw 'component: empty';
-   }
-   if (typeof component.start !== 'function') {
-      throw 'component: start';
-   }
-   if (typeof component.end !== 'function') {
-      throw 'component: end';
-   }
-   if (/^hello-component/.test(component.name)) {
-      await timeoutLifecyleHook(component.start());
-      await timeoutLifecyleHook(component.end());
-   }
-   console.info('OK', component.name);
-}
-```
-
-However, we do not generally validate that the lifecycle functions return a `Promise` - except on our specific test cases e.g. `hello-component` and `hello-component-class.`
-
-
-### Installation
-
-```shell
-git clone https://github.com/evanx/component-validator
-cd component-validator
-npm install
-```
-
-#### Validating a component initialising function
-
-We validate a component on Github as follows:
-```shell
-npm install https://github.com/evanx/hello-component
-node_modules/.bin/babel node_modules/hello-component/index.js -o build/hello-component.js
-componentModule=hello-component npm start
-```
-where we build the component with `babel` as a workaround to some Babel issues I'm experiencing with ES2016 `node_modules.`
-
-See: https://github.com/evanx/hello-component/blob/master/index.js
-
-We observe the following output.
-```
-loadModule hello-component
-hello { audience: 'world' }
-validateComponent hello-component [ 'start', 'end', 'name' ]
-system ready
-goodbye
-OK hello-component
-OK module loaded
-```
-
-#### ES6 class example
-
-We validate a component on Github as follows:
-```shell
-npm install https://github.com/evanx/hello-component-class
-node_modules/.bin/babel node_modules/hello-component-class/index.js -o build/hello-component-class.js
-componentModule=hello-component-class npm start
-```
-
-See: https://github.com/evanx/hello-component-class/blob/master/index.js
-
-We observe the following output.
-```
-loadModule hello-component-class
-hello hello-component-class
-validateComponent hello-component-class [ 'name', 'props', 'logger', 'metrics', 'context' ]
-system ready hello-component-class
-goodbye
-OK hello-component-class
-OK module loaded
-```
-
-#### Demo script
-
-See `scripts/hello/sh:`
-```shell
-c2validateComponent() {
-  component=$1
-  url=$2
-  echo; echo $component
-  npm install $url
-  node_modules/.bin/babel node_modules/$component/index.js -o build/hello-component-class.js
-  componentModule=$component npm start
-}
-```
-We invoke the function for our test components as follows:
-```
-c2validateComponent hello-component-class https://github.com/evanx/hello-component-class
-c2validateComponent hello-component https://github.com/evanx/hello-component
-```
-
 ### Specification
 
 STATUS: DESIGN STAGE
 
-The component supervisor singleton:
+#### Supervisor singleton
+
 - supports declarative defaults of system and component configuration properties.
 - supports declarative validation of customisable properties.
 - supports programmable system configuration "transforms" that provide constituent component configurations.
@@ -359,7 +258,8 @@ The component supervisor singleton:
 - supports multiple instances of the same component
 - supports scheduling components at various times/intervals
 
-A component
+#### Component instance
+
 - is assigned a name e.g. for configuration and logging
 - is provided with a logger
 - is provided with a metrics aggregator e.g. to count events, record averages, peak values, distributions for histograms, etc.
@@ -368,11 +268,7 @@ A component
 - is initialised with a `state` object which includes `{name, props, logger, context, metrics}`
 - has lifecycle hooks including `start` and `end`
 
-Incidently, the metrics aggregator:
-- counts events
-- somehow publishes/pushes metrics for monitoring purposes e.g. to Prometheus, Influx, Redis, et al.
-- optionally aggregates values to record the average, peak, and distribution for histograms
-- operates in tandem with the same logger, e.g. generates some logs on behalf of the component.
+#### Lifecycle methods
 
 The lifecycle hooks must return an ES6 `Promise` so that they can be expressed as ES2016 `async` functions for `await.`
 
@@ -381,18 +277,22 @@ When a component is expressed as an ES6 `class,` the following three functions a
 - `start()`
 - `end()`
 
-Alternatively when an `async function(state)` creates and initialises the component, it must return an object with `start()` and `end()` but `init(state)` is not required in this case.
 
-The dependencies passed via `context` are constrained only as follows:
-- any components therein must be initialised before `start()` is called
+#### Metrics aggregator
+
+- counts events
+- somehow publishes/pushes metrics for monitoring purposes e.g. to Prometheus, Influx, Redis, et al.
+- optionally aggregates values to record the average, peak, and distribution for histograms
+- operates in tandem with the same logger, e.g. generates some logs on behalf of the component.
 
 
-#### Component supervisor
+### Earlier component supervisor implementations
 
 Note that the component supervisor implementation is yet to be implemented as per this spec, drawing from similar work in the following of my projects:
 - https://github.com/evanx/mpush-redis
 - https://github.com/evanx/chronica
 - https://github.com/evanx/redex
+
 
 ##### mpush
 
