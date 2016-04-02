@@ -206,6 +206,7 @@ where the component can be configured to just `logger.warn()` in event of a `sch
 
 Before the supervisor calls a component's `end()` function, it must `clearTimeout()`
 
+
 ##### `scheduledInterval()`
 
 If a `scheduledInterval` (seconds) is configured via the component `props,` then this function must be defined.
@@ -398,18 +399,18 @@ Note that the component supervisor implementation is yet to be implemented as pe
 See the `Service` supervisor code: https://github.com/evanx/mpush-redis/blob/master/src/Service.js
 
 ```javascript
-async initComponent(component) {
-   assert(component.name, 'component name');
-   const name = component.name;
-   logger.info('initComponent', component.name);
-   await component.init({name,
+async initComponent(component, name) {
+   assert(name, 'component name');
+   logger.info('initComponent', name);
+   await component.init({
+      name: name,
       logger: this.createLogger(name),
       props: this.props,
       components: this.components,
       context: this
    });
    this.initedComponents.push(component);
-   this.components[component.name] = component;
+   this.components[name] = component;
 }
 ```
 
