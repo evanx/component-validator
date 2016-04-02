@@ -17,7 +17,7 @@ The component implements lifecyle `async` functions, so that `await` can be used
 - `end()` e.g. for system initialisation abort, or later shutdown.
 
 
-#### Class example
+##### Class example
 
 Expressed as an ES6 `class` with ES'16 `async` functions:
 ```javascript
@@ -37,7 +37,7 @@ export default class HelloComponent {
 where `logger` et al are provided via the `state` object, which we casually `Object.assign` into `this.`
 
 
-#### Function example
+##### Function example
 
 Expressed as an `async` function:
 ```javascript
