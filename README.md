@@ -170,6 +170,16 @@ Note that if `start()` was rejected, then no scheduling is performed.
 
 If a `scheduledTimeout` (seconds) is configured via the component `props,` then this function must be defined.
 
+Its invariants might be declared in YAML as follows:
+```yaml
+props:
+   scheduledTimeout:
+      interval: seconds      
+   scheduledTimeoutWarn:
+      type: boolean
+      optional: true
+```
+
 It is called via `setTimeout()` after a specified timeout period has elapsed since `start()` was resolved.
 
 The supervisor might implement this as follows:
@@ -192,7 +202,7 @@ The supervisor might implement this as follows:
       }
    }
 ```
-where the component can be configured to just `logger.warn` in event of a `scheduledTimeout` error. This overrides the default behavior, which is system shutdown, as the safest option.
+where the component can be configured to just `logger.warn()` in event of a `scheduledTimeout` error. This overrides the default behavior, which is system shutdown, as the safest option.
 
 Before the supervisor calls a component's `end()` function, it must `clearTimeout()`
 
@@ -205,7 +215,11 @@ Its invariants might be declared in YAML as follows:
 props:
    scheduledInterval:
       interval: seconds      
+   scheduledIntervalWarn:
+      type: boolean
+      optional: true
 ```
+
 It is called via `setInterval()` e.g. scheduled by the supervisor as follows:
 ```javascript
    scheduleComponentInterval(component, state) {
@@ -227,7 +241,7 @@ It is called via `setInterval()` e.g. scheduled by the supervisor as follows:
       }
    }
 ```
-where the component can be configured to just `logger.warn` in the event of an error. This overrides the default behavior, which is system shutdown, as the safest option.
+where the component can be configured to just `logger.warn()` in the event of an error. This overrides the default behavior, which is system shutdown, as the safest option.
 
 Before the supervisor calls a component's `end()` function, is must first call `clearInterval()` and later `clearTimeout()` if both are configured.
 
