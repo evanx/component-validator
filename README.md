@@ -180,8 +180,7 @@ It is called via `setTimeout()` after a specified timeout period has elapsed sin
 
 The supervisor might implement this as follows:
 ```javascript
-   scheduleComponentTimeout(component, state) {
-      const {name, props, logger} = state;
+   scheduleComponentTimeout(component, {name, props, logger, context}) {
       if (props.scheduledTimeout) {
          assert(typeof component.scheduledTimeout === 'function', 'scheduledTimeout: ' + name);
          this.scheduledTimeouts[name] = setTimeout(async () => {
@@ -191,7 +190,7 @@ The supervisor might implement this as follows:
                if (props.scheduledTimeoutWarn) {
                   logger.warn(err, component.name, props);
                } else {
-                  this.error(err, component);                  
+                  context.error(err, component);                  
                }
             }
          }, props.scheduledTimeout);
@@ -220,8 +219,7 @@ props:
 
 It is called via `setInterval()` e.g. scheduled by the supervisor as follows:
 ```javascript
-   scheduleComponentInterval(component, state) {
-      const {name, props} = state;
+   scheduleComponentInterval(component, {name, props, logger, context}) {
       if (props.scheduledInterval) {
          assert(typeof component.scheduledInterval === 'function', 'scheduledInterval: ' + name);
          this.scheduledIntervals[name] = setInterval(async () => {
@@ -232,7 +230,7 @@ It is called via `setInterval()` e.g. scheduled by the supervisor as follows:
                   logger.warn(err, component.name, props);
                } else {
                   clearInterval(this.scheduledIntervals[name]);
-                  this.error(err, component);                  
+                  context.error(err, component);                  
                }
             }
          }, props.scheduledInterval);
