@@ -171,6 +171,7 @@ props:
    scheduledTimeout:
       interval: seconds      
    scheduledTimeoutWarn:
+      defaultValue: false
       type: boolean
       optional: true
 ```
@@ -212,6 +213,7 @@ props:
    scheduledInterval:
       interval: seconds      
    scheduledIntervalWarn:
+      defaultValue: false
       type: boolean
       optional: true
 ```
