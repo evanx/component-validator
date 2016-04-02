@@ -151,7 +151,7 @@ Notes:
 
 For convenience, the supervisor must `setTimeout` and `setInterval` on behalf of a component so configured.
 
-If `start()` was rejected, then no scheduling is performed.
+Note that if `start()` was rejected, then no scheduling is performed.
 
 
 ##### `scheduledTimeout()`
