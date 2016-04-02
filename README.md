@@ -246,7 +246,7 @@ where the component can be configured to just `logger.warn()` in the event of an
 Before the supervisor calls a component's `end()` function, is must first call `clearInterval()` and later `clearTimeout()` if both are configured.
 
 
-### Component Vallidator implementation
+### Component Validator implementation
 
 ```javascript
 function validateComponent(component) {
