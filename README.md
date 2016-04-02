@@ -366,4 +366,6 @@ async function initComponents() {
 
 ### Further reading
 
+Component validator implementation: https://github.com/evanx/component-validator/blob/master/componentValidator.md
+
 Related projects and further plans: https://github.com/evanx/mpush-redis/blob/master/related.md
