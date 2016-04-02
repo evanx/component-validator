@@ -19,7 +19,7 @@ var metrics = {
    }
 };
 
-var service = {
+var context = {
    error: function(component, err) {
       console.error(err, component.name);
    }
@@ -61,14 +61,14 @@ export async function loadModule(componentModule) {
       throw 'componentClass ' + typeof componentClass;
    }
    //console.log('loadModule', typeof componentClass, isClass(componentClass), Object.keys(componentClass));
-   const state = {name, props, logger, metrics, service};
+   const state = {name, props, logger, metrics, context};
    if (isClass(componentClass)) {
       const component = new componentClass(state);
       await component.init(state);
       await validateComponent(component);
       return component;
    } else {
-      const component = await componentClass(state, props, logger, metrics, service);
+      const component = await componentClass(state, props, logger, metrics, context);
       component.name = name;
       await validateComponent(component);
       return component;

@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 var _bluebird = require('bluebird');
 
 exports.default = function () {
-   var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee3(state, props, logger, metrics, service) {
+   var ref = (0, _bluebird.coroutine)(regeneratorRuntime.mark(function _callee3(state, props, logger, metrics, context) {
       return regeneratorRuntime.wrap(function _callee3$(_context3) {
          while (1) {
             switch (_context3.prev = _context3.next) {

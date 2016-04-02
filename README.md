@@ -30,7 +30,7 @@ Expressed as an ES6 `class` with ES'16 `async` functions:
 export default class HelloComponent {
    async init(state) {
       Object.assign(this, state);
-      this.logger.info('hello', this.props, Object.keys(this.service));
+      this.logger.info('hello', this.props, Object.keys(this.context));
    }
    async start() {
       this.logger.info('system initialised');
@@ -72,9 +72,21 @@ export async function initComponent(componentClass, state) {
 ```
 where the `state` is passed to the constructor also, since the component might choose to perform some initialisation in its constructor. The `init()` function is effectively a complementary "promisified constructor."
 
-#### Configuration
+#### Decorators
 
-Component modules should provide validation metadata e.g. `HelloClass.props.yaml`
+ES2016 decorators should be supported for validation metadata e.g.:
+```javascript
+export class HelloComponentProps {
+
+      @url
+      redis = 'redis://localhost:6379/0';      
+
+      @seconds @min(1) @max(30)
+      started;
+}
+```
+
+Equivalently via YAML e.g. `HelloClass.props.yaml:`
 ```yaml
 props:
    redis:
@@ -91,11 +103,11 @@ props:
       min: 1
       max: 30
 ```
-where these invariants are used by the component supervisor to default and validate props.
+where these decorators are used by the component supervisor to default and validate props.
 
-Similarly, `service` dependencies should be declared:
+Similarly, `context` dependencies should be declared:
 ```yaml
-service:
+context:
    metrics:
       type: component
    redisClient:
@@ -103,8 +115,8 @@ service:
 ```
 
 The component supervisor must:
-- validate the `service` requirements before calling `init(state)`
-- initialise required components in `service` before calling `start()`
+- validate the `context` requirements before calling `init(state)`
+- initialise required components in `context` before calling `start()`
 
 
 ### Lifecycle functions
@@ -117,14 +129,14 @@ The lifecycle functions:
 - are not necessarily idempotent, insomuch as they are called at most once
 
 
-#### `init({name, logger, props, metrics, service})`
+#### `init({name, logger, props, metrics, context})`
 
 This is called to initialise the component with a `state` object containing:
 - `name` - the component's unique instance name
 - `logger` - a logger configured with the component's name
 - `metrics` - a metrics aggregator configured with the component's name
 - `props` - the immutable configuration of the component
-- `service` - for dependencies e.g. other required components
+- `context` - for dependencies e.g. other required components
 
 Notes:
 - The component might open a network connection here, e.g. to Redis.
@@ -144,7 +156,7 @@ Notes:
 - the component should close any connections here, e.g. so that Node can exit.
 - the component supervisor is responsible for ending all components in the event of an error.
 - the component should not `end()` itself or other components.
-- the component should signal a "fatal" error via `service.error(err, this)` to trigger a shutdown
+- the component should signal a "fatal" error via `context.error(err, this)` to trigger a shutdown
 
 
 #### Scheduling
@@ -156,7 +168,7 @@ Note that if `start()` was rejected, then no scheduling is performed.
 
 ##### `scheduledTimeout()`
 
-If a `scheduledTimeout` prop is configured on the component, then this function must be defined.
+If a `scheduledTimeout` (seconds) is configured via the component `props,` then this function must be defined.
 
 It is called via `setTimeout()` after a specified timeout period has elapsed since `start()` was resolved.
 
@@ -186,9 +198,15 @@ Before the supervisor calls a component's `end()` function, it must `clearTimeou
 
 ##### `scheduledInterval()`
 
-Called via `setInterval()` at a configured interval.
+If a `scheduledInterval` (seconds) is configured via the component `props,` then this function must be defined.
 
-The supervisor might implement this as follows:
+Its invariants might be declared in YAML as follows:
+```yaml
+props:
+   scheduledInterval:
+      interval: seconds      
+```
+It is called via `setInterval()` e.g. scheduled by the supervisor as follows:
 ```javascript
    scheduleComponentInterval(component, state) {
       const {name, props} = state;
@@ -285,7 +303,7 @@ We observe the following output.
 ```
 loadModule hello-component-class
 hello hello-component-class
-validateComponent hello-component-class [ 'name', 'props', 'logger', 'metrics', 'service' ]
+validateComponent hello-component-class [ 'name', 'props', 'logger', 'metrics', 'context' ]
 system ready hello-component-class
 goodbye
 OK hello-component-class
@@ -320,7 +338,7 @@ The component supervisor singleton:
 - supports declarative validation of customisable properties.
 - supports programmable system configuration "transforms" that provide constituent component configurations.
 - supports using third-party tools such as `gulp` for configuration pipelines
-- initialises each required component as per its required configuration properties and service dependencies.
+- initialises each required component as per its required configuration properties and context dependencies.
 - advises components to `start` when the system is ready e.g. all components have been successfully initialised
 - initiates a graceful shutdown of all components
 - supports multiple instances of the same component
@@ -331,8 +349,8 @@ A component
 - is provided with a logger
 - is provided with a metrics aggregator e.g. to count events, record averages, peak values, distributions for histograms, etc.
 - is configured with a set of `props` which must be considered immutable
-- is provided with other dependencies via a `service` object
-- is initialised with a `state` object which includes `{name, props, logger, service, metrics}`
+- is provided with other dependencies via a `context` object
+- is initialised with a `state` object which includes `{name, props, logger, context, metrics}`
 - has lifecycle hooks including `start` and `end`
 
 Incidently, the metrics aggregator:
@@ -350,7 +368,7 @@ When a component is expressed as an ES6 `class,` the following three functions a
 
 Alternatively when an `async function(state)` creates and initialises the component, it must return an object with `start()` and `end()` but `init(state)` is not required in this case.
 
-The dependencies passed via `service` are constrained only as follows:
+The dependencies passed via `context` are constrained only as follows:
 - any components therein must be initialised before `start()` is called
 
 
@@ -374,7 +392,7 @@ async initComponent(component) {
       logger: this.createLogger(name),
       props: this.props,
       components: this.components,
-      service: this
+      context: this
    });
    this.initedComponents.push(component);
    this.components[component.name] = component;
