@@ -151,14 +151,14 @@ Notes:
 
 For convenience, the supervisor must `setTimeout` and `setInterval` on behalf of a component so configured.
 
+If `start()` was rejected, then no scheduling is performed.
+
 
 ##### `scheduledTimeout()`
 
 If a `scheduledTimeout` prop is configured on the component, then this function must be defined.
 
 It is called via `setTimeout()` after a specified timeout period has elapsed since `start()` was resolved.
-
-If `start()` was rejected, then it is not scheduled.
 
 The supervisor might implement this as follows:
 ```javascript
