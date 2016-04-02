@@ -138,14 +138,14 @@ Notes:
 
 #### `start()`
 
-- called after this component and its dependencies have been initialised successfully
+Called after this component and its dependencies have been initialised successfully
 
 Notes:
 - The component might open a network connection here, e.g. to Redis.
 
 #### `end()`
 
-- called to shutdown the component e.g. for a graceful system exit.
+Called to shutdown the component e.g. for a graceful system exit.
 
 Notes:
 - the component should close any connections here, e.g. so that Node can exit.
