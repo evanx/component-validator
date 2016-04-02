@@ -11,12 +11,12 @@ This component model must support:
 - ES2016 async/await
 - reduced boilerplate code
 
-### Components
-
 The component implements lifecyle `async` functions, so that `await` can be used:
 - initialisation e.g. `init(state)`
 - `start()` when all dependencies have been initialised.
 - `end()` e.g. for system initialisation abort, or later shutdown.
+
+### Examples
 
 #### ES6 Class
 
@@ -67,7 +67,7 @@ export async function initComponent(componentClass, state) {
 ```
 where the `state` is passed to the constructor also, since the component might choose to perform some initialisation in its constructor. The `init()` function is effectively a complementary "promisified constructor."
 
-#### Decorators
+### Decorators
 
 ES2016 decorators should be supported for validation metadata e.g.:
 ```javascript
@@ -154,7 +154,7 @@ Notes:
 - the component should signal a "fatal" error via `context.error(err, this)` to trigger a shutdown
 
 
-#### Scheduling
+### Scheduling
 
 For convenience, the supervisor must `setTimeout` and `setInterval` on behalf of a component so configured.
 
@@ -268,15 +268,6 @@ STATUS: DESIGN STAGE
 - is initialised with a `state` object which includes `{name, props, logger, context, metrics}`
 - has lifecycle hooks including `start` and `end`
 
-#### Lifecycle methods
-
-The lifecycle hooks must return an ES6 `Promise` so that they can be expressed as ES2016 `async` functions for `await.`
-
-When a component is expressed as an ES6 `class,` the following three functions are required:
-- `init(state)`
-- `start()`
-- `end()`
-
 
 #### Metrics aggregator
 
@@ -294,7 +285,7 @@ Note that the component supervisor implementation is yet to be implemented as pe
 - https://github.com/evanx/redex
 
 
-##### mpush
+#### mpush
 
 See the `Service` supervisor code: https://github.com/evanx/mpush-redis/blob/master/src/Service.js
 
@@ -314,7 +305,7 @@ async initComponent(component, name) {
 }
 ```
 
-##### Redex
+#### Redex
 
 See code: https://github.com/evanx/redex/blob/master/lib/Redex.js
 
@@ -338,7 +329,7 @@ async endProcessors() {
 }
 ```
 
-##### Chronica
+#### Chronica
 
 See its `ComponentFactory` documentation: https://github.com/evanx/chronica/blob/master/lib/ComponentFactory.md
 
