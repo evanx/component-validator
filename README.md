@@ -243,7 +243,7 @@ It is called via `setInterval()` e.g. scheduled by the supervisor as follows:
 ```
 where the component can be configured to just `logger.warn()` in the event of an error. This overrides the default behavior, which is system shutdown, as the safest option.
 
-Before the supervisor calls a component's `end()` function, is must first call `clearInterval()` and later `clearTimeout()` if both are configured.
+Before the supervisor calls a component's `end()` function, is must first call `clearInterval()` - and later `clearTimeout()` if both are configured.
 
 
 ### Component Validator implementation
