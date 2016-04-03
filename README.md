@@ -175,7 +175,7 @@ props:
       optional: true
 ```
 
-The `scheduledTimeout()` function is called via `setTimeout()` after a specified timeout period has elapsed since `start()` was resolved.
+The `scheduledTimeout()` function is called via `setTimeout()` after the specified timeout period has elapsed since `start()` was resolved.
 
 The supervisor might implement this as follows:
 ```javascript
