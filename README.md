@@ -59,7 +59,8 @@ Incidently, an ES6 `class` implementation is expressed as an equivalent function
 ```javascript
 export async function initComponent(componentClass, state) {
    const component = new componentClass(state);
-   if (typeof component.init === 'function') {
+   if (component.init) {
+      assert(lodash.isFunction(component.init), 'init function');
       await component.init(state);
    }
    return component;
@@ -109,9 +110,7 @@ context:
       optional: true
 ```
 
-The component supervisor must:
-- validate the `context` requirements before calling `init(state)`
-- initialise required components in `context` before calling `start()`
+Before calling `start(),` the component supervisor must validate the `context` requirements, and initialise all components therein.
 
 
 ### Lifecycle functions
@@ -176,7 +175,7 @@ props:
       optional: true
 ```
 
-It is called via `setTimeout()` after a specified timeout period has elapsed since `start()` was resolved.
+The `scheduledTimeout` function is called via `setTimeout()` after a specified timeout period has elapsed since `start()` was resolved.
 
 The supervisor might implement this as follows:
 ```javascript
@@ -217,7 +216,7 @@ props:
       optional: true
 ```
 
-It is called via `setInterval()` e.g. scheduled by the supervisor as follows:
+This lifecycle function is called via `setInterval()` e.g. scheduled by the supervisor as follows:
 ```javascript
    scheduleComponentInterval(component, {name, props, logger, context}) {
       if (props.scheduledInterval) {
