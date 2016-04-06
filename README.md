@@ -11,11 +11,6 @@ This component model must support:
 - ES2016 async/await
 - reduced boilerplate code
 
-The component implements lifecyle `async` functions, so that `await` can be used:
-- initialisation e.g. `init(state)`
-- `start()` when all dependencies have been initialised.
-- `end()` e.g. for system initialisation abort, or later shutdown.
-
 
 ###### Class example
 
