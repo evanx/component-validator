@@ -118,7 +118,7 @@ state:
    startTimestamp: {}
    ended: false
 ```
-In this case, we might preprocess the ES6 class to automatically insert `this.` dereferencing in the source for the declared properties:
+In this case, we might preprocess the ES6 class to automatically insert `this` dereferencing in the source for the declared properties:
 ```javascript
 await ClassPreprocessor.build(
    componentSourceFile,
