@@ -171,10 +171,13 @@ export default class HelloComponent {
 ```
 where references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel plugin.
 
-Generally speaking, this proposed transform is dangerous. It assumes that <b>some</b> "special" references are <b>implicitly</b> intended for `this,` where these might be specified in some "meta module."
+Generally speaking, this proposed transform is dangerous. It assumes that <b>some</b> "special" references are <b>implicitly</b> intended for `this,` including those declared in some "meta module."
 
-Nevertheless, a specific component supervisor implementation might be explicitly limited to such "implicit properties" components, which is fine. It should validate its components e.g. to detect the misconfiguration of third-party components that are not supported by the supervisor.
-
+Nevertheless, a specific component supervisor implementation might support such a component. Therefore a component's meta module should explicitly declare its specification compatibility e.g. in CSON:
+```javascript
+spec: 'component-validator#1.0.1'
+```
+where an `npm` module named `meta-implicit-class-properties` should be installed, and it's `package.json` version must be `1.0.1.` This `spec` module must export an object `metaSpec` with a function `validateComponentSupervisor()` to validate its compatibility with a given supervisor spec.
 
 ### Lifecycle functions
 
