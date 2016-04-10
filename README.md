@@ -92,7 +92,7 @@ export default class MyRedisComponentConfig {
 ```
 where these decorators must be used by the component supervisor to default and validate the `config` for this component.
 
-Note that the specification of these decorators should be provided by the component supervisor implementation.
+TODO: the specification of these decorators
 
 
 #### Declaring config props
@@ -118,7 +118,7 @@ config:
       max: 30
 ```
 
-Note that the content of the config metadata, and its use for defaulting and validation, must be specified by the component supervisor implementation.
+TODO: the content of the config metadata, and its use for defaulting and validation
 
 
 #### Declaring context props
