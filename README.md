@@ -118,7 +118,7 @@ config:
       max: 30
 ```
 
-configDO (Supervisor): specify the content of the config metadata for defaulting and validation
+TODO (Supervisor): specify the content of the config metadata for defaulting and validation
 
 
 #### Declaring context props
