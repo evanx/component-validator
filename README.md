@@ -92,7 +92,7 @@ export default class MyRedisComponentConfig {
 ```
 where these decorators must be used by the component supervisor to default and validate the `config` for this component.
 
-Note that the specification and implementation of these decorators should be provided by the component supervisor implementation.
+Note that the specification of these decorators should be provided by the component supervisor implementation.
 
 
 #### Declaring config props
