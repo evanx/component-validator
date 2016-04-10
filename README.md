@@ -157,7 +157,7 @@ export default class HelloComponent {
       logger.info('hello', config, Object.keys(context));
    }
    async start() {
-      logger.info('system initialised',  await redisClient.timeAsync());
+      logger.info('system initialised',  await supervisor.getRedisTime();
    }
    async end() {
       logger.info('goodbye');
