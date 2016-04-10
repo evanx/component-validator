@@ -109,13 +109,13 @@ Before calling `start(),` the component supervisor must validate the `context` r
 
 #### Declaring state props
 
-Experimentally speaking, we might declare additional required `state` properties for a class:
+We might declare additional required `state` properties for a class:
 ```yaml
 state:
    redisClient:
       type: 'object'
 ```
-In this case, we could preprocess the ES6 class to automatically insert `this` referencing in the source for the declared `state` properties, namely:
+Experimentally speaking, we could preprocess the ES6 class to automatically insert `this` referencing in the source for the declared `state` properties, namely:
 ```javascript
 ['config', 'logger', 'context'].concat(
    Object.keys(state));
