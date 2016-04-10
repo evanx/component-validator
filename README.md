@@ -288,7 +288,7 @@ STATUS: DESIGN STAGE
 - is assigned a name e.g. for configuration and logging
 - is provided with a logger
 - is provided with a metrics aggregator e.g. to count events, record averages, peak values, distributions for histograms, etc.
-- is configured with a set of `config` which must be considered immutable
+- is configured with a set of `config` properties which must be considered immutable
 - is provided with other dependencies via a `context` object
 - is initialised with a `state` object which includes `{name, config, logger, context, metrics}`
 - has lifecycle hooks including `start` and `end`
