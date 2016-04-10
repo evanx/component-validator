@@ -118,10 +118,23 @@ state:
    startTimestamp: {}
    ended: false
 ```
-In this case, we can preprocess the ES6 class automatically insert `this.` dereferencing in the source:
+In this case, we can preprocess the ES6 class to automatically insert `this.` dereferencing in the source for the declared properties:
 ```javascript
-ClassPreprocessor.buildSync(componentSourceFile, ['logger', 'context', 'config'].concat(Object.keys(componentMeta.state)));
+await ClassPreprocessor.build(
+   componentSourceFile,
+   ['config', 'logger', 'context'].concat(
+      Object.keys(componentMeta.state)
+   )
+);
 ```
+and we initialise the class as follows:
+```javascript
+await component.init(Object.assign(
+   {logger, config, context},
+   componentMeta.state
+));
+```
+where we coalesce the declared `state` props.
 
 ### Lifecycle functions
 
