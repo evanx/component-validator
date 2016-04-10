@@ -278,12 +278,12 @@ Before the supervisor calls a component's `end()` function, is must first call `
 
 ### Optional implicit class properties
 
-Experimentally, to reduce boilerplate in our components, we could preprocess the ES6 class to automatically insert `this` referencing for all of its `state` properties:
+Experimentally, to reduce `this.` boilerplate in components, we shold preprocess their ES6 class to automatically insert `this.` referencing for all of its "state" properties:
 ```javascript
 ['config', 'logger', 'metrics', 'context'].concat(
    Object.keys(state));
 ```   
-where `state` includes the key `supervisor` in our the meta module example.
+where `state` is additional state props e.g. the key `supervisor` in our meta module example.
 
 Then our component class can be expressed as follows:
 ```javascript
