@@ -137,12 +137,10 @@ export default class HelloComponent {
 where references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel transform plugin.
 
 ```javascript
-await ClassPreprocessor.build(
-   componentSourceFile,
+const declaredStateKeys =
    ['config', 'logger', 'context'].concat(
       Object.keys(componentMeta.state)
-   )
-);
+   );
 ```
 Generally speaking, this is a rather dangerous transform. Therefore the class must be implemented such that all references to the declared state props names, are strictly intended for `this.`
 
