@@ -166,7 +166,9 @@ export default class HelloComponent {
 ```
 where references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel plugin.
 
-Generally speaking, this proposed transform is a dangerously fragile. Therefore the class must be implemented such that all references to the declared state props names, are strictly intended for `this.`
+Generally speaking, this proposed transform is dangerous. It assumes that <b>some</b> "special" references are <b>implicitly</b> intended for `this,` where these might be specified in some "meta module."
+
+Nevertheless, a specific component supervisor implementation might favour this transform, and so is limited to some such purpose-built components, which is fine.
 
 
 ### Lifecycle functions
