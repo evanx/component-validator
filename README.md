@@ -66,7 +66,7 @@ where the `state` is passed to the constructor also, since the component might c
 
 ### Meta modules
 
-Each component should be accompanied by a "meta module," which declares invariants of the component.
+Each component should be accompanied by a "meta module," which declares invariants of the component, e.g. required configuration properties and context.
 
 This metadata must be loaded by the component supervisor via `require().`
 
