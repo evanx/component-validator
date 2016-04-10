@@ -146,7 +146,7 @@ state:
 where the component is requiring a reference to its supervisor.
 
 
-#### Optional implicit class properties
+##### Optional implicit class properties
 
 Experimentally speaking, we could preprocess the ES6 class to automatically insert `this` referencing in the source for all `state` properties:
 ```javascript
