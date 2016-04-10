@@ -74,7 +74,7 @@ We observe the following output.
 ```
 loadModule hello-component-class
 hello hello-component-class
-validateComponent hello-component-class [ 'name', 'props', 'logger', 'metrics', 'context' ]
+validateComponent hello-component-class [ 'name', 'config', 'logger', 'metrics', 'context' ]
 system ready hello-component-class
 goodbye
 OK hello-component-class

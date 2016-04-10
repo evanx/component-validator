@@ -19,7 +19,7 @@ Expressed as an ES6 `class` with ES'16 `async` functions:
 export default class HelloComponent {
    async init(state) {
       Object.assign(this, state);
-      this.logger.info('hello', this.props, Object.keys(this.context));
+      this.logger.info('hello', this.config, Object.keys(this.context));
    }
    async start() {
       this.logger.info('system initialised');
@@ -36,8 +36,8 @@ where `logger` et al are provided via the `state` object, which we casually `Obj
 
 Expressed as an `async` function:
 ```javascript
-export async function createHelloComponent({props, logger}) {
-   logger.info('hello', props);
+export async function createHelloComponent({config, logger}) {
+   logger.info('hello', config);
    return {
       async start() {
          logger.info('system initialised');
@@ -48,7 +48,7 @@ export async function createHelloComponent({props, logger}) {
    };
 }
 ```
-where `props` and `logger` are destructured from the `state` object.
+where `config` and `logger` are destructured from the `state` object.
 
 Incidently, an ES6 `class` implementation is expressed as an equivalent function as follows:
 ```javascript
@@ -67,7 +67,7 @@ where the `state` is passed to the constructor also, since the component might c
 
 ES2016 decorators should be supported for validation metadata e.g.:
 ```javascript
-export class HelloComponentProps {
+export class HelloComponentconfig {
 
       @url
       redis = 'redis://localhost:6379/0';      
@@ -77,9 +77,9 @@ export class HelloComponentProps {
 }
 ```
 
-Equivalently via YAML e.g. `HelloClass.props.yaml:`
+Equivalently via YAML e.g. `HelloClass.config.yaml:`
 ```yaml
-props:
+config:
    redis:
       type: url
       defaultValue: redis://localhost:6379/0
@@ -94,7 +94,7 @@ props:
       min: 1
       max: 30
 ```
-where these decorators are used by the component supervisor to default and validate props.
+where these decorators are used by the component supervisor to default and validate config.
 
 Similarly, `context` dependencies should be declared:
 ```yaml
@@ -107,6 +107,21 @@ context:
 
 Before calling `start(),` the component supervisor must validate the `context` requirements, and initialise all components therein.
 
+#### declaring state config
+
+Additionally we might declare the (initial) `state` properties of the class:
+```yaml
+state:
+   startedComponents: []
+   components: {}
+   requiredComponents: []
+   startTimestamp: {}
+   ended: false
+```
+In this case, we can preprocess the ES6 class automatically insert `this.` dereferencing in the source:
+```javascript
+ClassPreprocessor.buildSync(componentSourceFile, ['logger', 'context', 'config'].concat(Object.keys(componentMeta.state)));
+```
 
 ### Lifecycle functions
 
@@ -118,13 +133,13 @@ The lifecycle functions:
 - are not necessarily idempotent, insomuch as they are called at most once
 
 
-#### `init({name, logger, props, metrics, context})`
+#### `init({name, logger, config, metrics, context})`
 
 This is called to initialise the component with a `state` object containing:
 - `name` - the component's unique instance name
 - `logger` - a logger configured with the component's name
 - `metrics` - a metrics aggregator configured with the component's name
-- `props` - the immutable configuration of the component
+- `config` - the immutable configuration of the component
 - `context` - for dependencies e.g. other required components
 
 Notes:
@@ -157,11 +172,11 @@ Note that if `start()` was rejected, then no scheduling is performed.
 
 ##### `scheduledTimeout()`
 
-If a `scheduledTimeout` (seconds) is configured via the component `props,` then this function must be defined.
+If a `scheduledTimeout` (seconds) is configured via the component `config,` then this function must be defined.
 
 Its invariants might be declared in YAML as follows:
 ```yaml
-props:
+config:
    scheduledTimeout:
       interval: seconds      
    scheduledTimeoutWarn:
@@ -174,20 +189,20 @@ The `scheduledTimeout()` function is called via `setTimeout()` after the specifi
 
 The supervisor might implement this as follows:
 ```javascript
-   scheduleComponentTimeout(component, {name, props, logger, context}) {
-      if (props.scheduledTimeout) {
+   scheduleComponentTimeout(component, {name, config, logger, context}) {
+      if (config.scheduledTimeout) {
          assert(typeof component.scheduledTimeout === 'function', 'scheduledTimeout: ' + name);
          this.scheduledTimeouts[name] = setTimeout(async () => {
             try {
                async component.scheduledTimeout();
             } catch (err) {               
-               if (props.scheduledTimeoutWarn) {
-                  logger.warn(err, component.name, props);
+               if (config.scheduledTimeoutWarn) {
+                  logger.warn(err, component.name, config);
                } else {
                   context.error(err, component);                  
                }
             }
-         }, props.scheduledTimeout);
+         }, config.scheduledTimeout);
       }
    }
 ```
@@ -198,11 +213,11 @@ Before the supervisor calls a component's `end()` function, it must `clearTimeou
 
 ##### `scheduledInterval()`
 
-If a `scheduledInterval` (seconds) is configured via the component `props,` then this function must be defined.
+If a `scheduledInterval` (seconds) is configured via the component `config,` then this function must be defined.
 
 Its invariants might be declared in YAML as follows:
 ```yaml
-props:
+config:
    scheduledInterval:
       interval: seconds      
    scheduledIntervalWarn:
@@ -213,21 +228,21 @@ props:
 
 This lifecycle function is called via `setInterval()` e.g. scheduled by the supervisor as follows:
 ```javascript
-   scheduleComponentInterval(component, {name, props, logger, context}) {
-      if (props.scheduledInterval) {
+   scheduleComponentInterval(component, {name, config, logger, context}) {
+      if (config.scheduledInterval) {
          assert(typeof component.scheduledInterval === 'function', 'scheduledInterval: ' + name);
          this.scheduledIntervals[name] = setInterval(async () => {
             try {
                async component.scheduledInterval();
             } catch (err) {
-               if (props.scheduledIntervalWarn) {
-                  logger.warn(err, component.name, props);
+               if (config.scheduledIntervalWarn) {
+                  logger.warn(err, component.name, config);
                } else {
                   clearInterval(this.scheduledIntervals[name]);
                   context.error(err, component);                  
                }
             }
-         }, props.scheduledInterval);
+         }, config.scheduledInterval);
       }
    }
 ```
@@ -257,9 +272,9 @@ STATUS: DESIGN STAGE
 - is assigned a name e.g. for configuration and logging
 - is provided with a logger
 - is provided with a metrics aggregator e.g. to count events, record averages, peak values, distributions for histograms, etc.
-- is configured with a set of `props` which must be considered immutable
+- is configured with a set of `config` which must be considered immutable
 - is provided with other dependencies via a `context` object
-- is initialised with a `state` object which includes `{name, props, logger, context, metrics}`
+- is initialised with a `state` object which includes `{name, config, logger, context, metrics}`
 - has lifecycle hooks including `start` and `end`
 
 
@@ -290,7 +305,7 @@ async initComponent(component, name) {
    await component.init({
       name: name,
       logger: this.createLogger(name),
-      props: this.props,
+      config: this.config,
       components: this.components,
       context: this
    });

@@ -1,5 +1,5 @@
 
-var props = {
+var config = {
    audience: 'world'
 };
 
@@ -61,14 +61,14 @@ export async function loadModule(componentModule) {
       throw 'componentClass ' + typeof componentClass;
    }
    //console.log('loadModule', typeof componentClass, isClass(componentClass), Object.keys(componentClass));
-   const state = {name, props, logger, metrics, context};
+   const state = {name, config, logger, metrics, context};
    if (isClass(componentClass)) {
       const component = new componentClass(state);
       await component.init(state);
       await validateComponent(component);
       return component;
    } else {
-      const component = await componentClass(state, props, logger, metrics, context);
+      const component = await componentClass(state, config, logger, metrics, context);
       component.name = name;
       await validateComponent(component);
       return component;
