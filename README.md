@@ -145,15 +145,15 @@ state:
 ```
 where the component is requiring a reference to its supervisor.
 
+
+#### Optional implicit class properties
+
 Experimentally speaking, we could preprocess the ES6 class to automatically insert `this` referencing in the source for all `state` properties:
 ```javascript
 ['config', 'logger', 'metrics', 'context'].concat(
    Object.keys(state));
 ```   
 where `state` includes `supervisor,` as per the meta module.
-
-
-#### Optional implicit class properties
 
 Then our component class can be coded as follows:
 ```javascript
