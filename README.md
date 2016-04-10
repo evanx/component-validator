@@ -171,7 +171,7 @@ where the component is requiring a reference to its supervisor.
 
 Experimentally speaking, we could preprocess the ES6 class to automatically insert `this` referencing in the source for all `state` properties:
 ```javascript
-['config', 'logger', 'context'].concat(
+['config', 'logger', 'metrics', 'context'].concat(
    Object.keys(state));
 ```   
 where `state` includes `supervisor,` as per the meta module.
