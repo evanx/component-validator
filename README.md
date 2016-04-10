@@ -149,7 +149,7 @@ For this case, we automatically `Object.assign` the `state` on the class as foll
 
 ```javascript
 Object.assign(component,
-   {logger, config, context},
+   {config, logger, context},
    componentMeta.state
 );
 ```
