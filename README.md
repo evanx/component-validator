@@ -305,7 +305,7 @@ Nevertheless, my planned component supervisor implementation might experimentall
 ```javascript
 spec: 'component-validator/icp#0.1.0'
 ```
-where the `spec` tag is optionally compacted into a terse string incorporating the `module,` `version` and a "preset" key.
+where the `spec` tag is optionally compacted into a terse string incorporating the `{module, version}` and a "preset" key.
 
 For example, the version number `0.1.0` is extracted from `spec` to validate this legacy version specifically. The validation function should be backwards-compatible insomuch as it correctly validates any component spec version, for the given supervisor version.
 
