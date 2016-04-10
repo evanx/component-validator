@@ -112,20 +112,10 @@ Before calling `start(),` the component supervisor must validate the `context` r
 Experimentally speaking, we might declare the (initial) `state` properties of the class:
 ```yaml
 state:
-   startedComponents: []
-   components: {}
-   requiredComponents: []
-   startTimestamp: {}
-   ended: false
+   redisClient:
+      optional: false
 ```
 In this case, we could preprocess the ES6 class to automatically insert `this` referencing in the source for the declared properties:
-
-```javascript
-const declaredPropNames =
-   ['config', 'logger', 'context'].concat(
-      Object.keys(componentMeta.state)
-   );
-```
 
 Our component class can then be coded as follows:
 ```javascript
@@ -134,26 +124,20 @@ export default class HelloComponent {
       logger.info('hello', config, Object.keys(context));
    }
    async start() {
-      logger.info('system initialised');
+      logger.info('system initialised',  await redisClient.timeAsync());
    }
    async end() {
       logger.info('goodbye');
    }
 }
 ```
-where references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel transform plugin.
-
-Generally speaking, this is a rather dangerous transform. Therefore the class must be implemented such that all references to the declared state props names, are strictly intended for `this.`
-
-Also to support the above example class implementation, we automatically `Object.assign` the `state` on the class as follows:
-
+where references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel plugin, which transforms `Object.keys(state)` references:
 ```javascript
-Object.assign(component,
-   {config, logger, context},
-   componentMeta.state
-);
+['config', 'logger', 'context'].concat(
+      Object.keys(componentMeta.state));
 ```
-where we coalesce the declared `state` props.
+
+Generally speaking, this proposed transform is a dangerously fragile. Therefore the class must be implemented such that all references to the declared state props names, are strictly intended for `this.`
 
 
 ### Lifecycle functions
