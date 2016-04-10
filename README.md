@@ -172,7 +172,7 @@ Generally speaking, this proposed transform is dangerous. It assumes that <b>som
 
 Nevertheless, a specific component supervisor implementation might be explicitly limited to such "implicit properties" components, which is fine.
 
-TODO: component supervisor implementation to validate that its supports a component, e.g. one that has declared itself to use "implicit class properties:"
+TODO: component supervisor implementation to validate that it supports a given component, e.g. one that has declared itself to use "implicit class properties" in its meta module:
 ```yaml
 namespace: //github.com/evanx/component-validator/component-meta-implicit-class-props-0.1.0
 ```
