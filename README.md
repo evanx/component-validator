@@ -121,7 +121,7 @@ state:
 In this case, we could preprocess the ES6 class to automatically insert `this` referencing in the source for the declared properties:
 
 ```javascript
-const declaredStateKeys =
+const declaredPropNames =
    ['config', 'logger', 'context'].concat(
       Object.keys(componentMeta.state)
    );
