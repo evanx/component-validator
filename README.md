@@ -87,10 +87,12 @@ In this case, the supervisor only supports this component if:
 
 Otherwise, it must request validation as follows:
 ```javascript
-  require(componentMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
-  require(supervisorMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
+function validateComponentSupervisor(componentMeta, supervisorMeta) {
+   require(componentMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
+   require(supervisorMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
+}
 ```
-where the `spec` names should be JS module names, which must be installed if this validation is to succeed. The purpose of these spec modules is to validate if the component and supervisor support each other. If not, one must throw an error.
+where the `spec` names should be JS module names, which clearly must be installed if this validation is to succeed. The purpose of these spec modules is to validate if the component and supervisor support each other. If not, one must throw an error.
 
 Note that `forceSpecName` and `forceSpecModule` are typically `undefined` on components, but are intended for temporary override purposes.
 
