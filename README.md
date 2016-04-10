@@ -127,7 +127,7 @@ await ClassPreprocessor.build(
    )
 );
 ```
-However generally speaking this is a rather dangerous transform. Therefore class must be implemented such that any references to the declared state props names, are strictly intended for `this.`
+Generally speaking, this is a rather dangerous transform. Therefore the class must be implemented such that all references to the declared state props names, are strictly intended for `this.`
 
 Our component class can then be coded as follows:
 ```javascript
