@@ -152,6 +152,9 @@ Experimentally speaking, we could preprocess the ES6 class to automatically inse
 ```   
 where `state` includes `supervisor,` as per the meta module.
 
+
+#### Optional implicit class properties
+
 Then our component class can be coded as follows:
 ```javascript
 export default class HelloComponent {
