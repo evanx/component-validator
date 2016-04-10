@@ -73,7 +73,7 @@ This metadata must be loaded by the component supervisor via `require().`
 Besides JSON, or some other file format supported by a require hook, it can be a programmable JavaScript module e.g. using `module.exports` or ES6 `export default.`
 
 
-#### ES2016 decorators
+#### ES2016 decorators (unscoped)
 
 ES2016 decorators should be supported for validation metadata e.g.:
 ```javascript
@@ -90,7 +90,9 @@ export default class MyRedisComponentConfig {
 }
 
 ```
-where these decorators should be used by the component supervisor to default and validate the `config` for this component.
+where these decorators must be used by the component supervisor to default and validate the `config` for this component.
+
+The specification and implementation of these decorators should be provided by the component supervisor implementation.
 
 
 #### Declaring config props
@@ -116,7 +118,8 @@ config:
       max: 30
 ```
 
-Note that the content of the config metadata, and its use for defaulting and validation, are yet to be scoped.
+Note that the content of the config metadata, and its use for defaulting and validation, must be specified by the component supervisor implementation.
+
 
 #### Declaring context props
 
