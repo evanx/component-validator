@@ -175,9 +175,9 @@ Generally speaking, this proposed transform is dangerous. It assumes that <b>som
 
 Nevertheless, my planned component supervisor implementation might experimentally support such a custom transform. Therefore a component's meta module should explicitly declare its specification compatibility e.g. in CSON:
 ```javascript
-spec: 'component-validator#1.0.1'
+spec: 'component-validator#0.1.0'
 ```
-where an `npm` module named `component-validator` should be installed, and it's `package.json` version must be `1.0.1.` This `spec` module must export a function `validateComponentSupervisor()` to validate its compatibility with a given supervisor spec.
+where an `npm` module named `component-validator` should be installed, and export a function `validateComponentSupervisor().` This function must be called to validate a component `spec` for use with a given supervisor spec. For example, the version number `0.1.0` is extracted from the `spec` to validate this legacy version.
 
 
 ### Lifecycle functions
