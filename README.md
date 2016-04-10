@@ -72,6 +72,25 @@ This metadata must be loaded by the component supervisor via `require().`
 
 Besides JSON, or some other file format supported by a require hook, it can be a programmable JavaScript module e.g. using `module.exports` or ES6 `export default.`
 
+The component supervisor implementation to validate that it supports a given component. First and foremost, it must validate the "namespace" of the meta data e.g. consider a component with the following meta module:
+```javascript
+module.exports = {
+   spec: 'component-meta-0.1.0',
+   forceSpec: true,
+   invalidSpec: true,
+```
+where the supervisor only supports the component if:
+- it explicitly supports this particular `spec`
+- or `forceSpec` is truthy
+
+Otherwise, if `invalidSpec` is falsey, it must request validation as follows:
+```javascript
+  require(componentMeta.spec).validateCombo(componentMeta, supervisorMeta);
+  require(supervisorMeta.spec).validateCombo(componentMeta, supervisorMeta);
+```
+where the `spec` names should be JS module names, which must be installed if this validation is to succeed.
+
+Note that `forceSpec` and `invalidSpec` are typically `undefined` on components, but are provided for emergency override purposes.
 
 #### ES2016 decorators
 
@@ -171,14 +190,6 @@ where references to `logger` et al are preprocessed into `this.logger` e.g. via 
 Generally speaking, this proposed transform is dangerous. It assumes that <b>some</b> "special" references are <b>implicitly</b> intended for `this,` where these might be specified in some "meta module."
 
 Nevertheless, a specific component supervisor implementation might be explicitly limited to such "implicit properties" components, which is fine.
-
-TODO: component supervisor implementation to validate that it supports a given component, e.g. one that has declared itself to use "implicit class properties" in its meta module:
-```yaml
-namespace: ex2016/component-meta-implicit-class-props-0.1.0
-```
-where the supervisor only supports the component if
-- it explicitly supports this particular `namespace` for meta modules
-- otherwise it can require the `namespace` as a module, and request explicit validation of its own `namespace`
 
 
 ### Lifecycle functions
