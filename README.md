@@ -150,6 +150,8 @@ Experimentally speaking, we could preprocess the ES6 class to automatically inse
 ['config', 'logger', 'context'].concat(
    Object.keys(state));
 ```   
+where `state` includes `supervisor,` as per the meta module.
+
 Then our component class can be coded as follows:
 ```javascript
 export default class HelloComponent {
