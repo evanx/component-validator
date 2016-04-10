@@ -143,11 +143,10 @@ export default class HelloComponent {
    }
 }
 ```
-where:
-- references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel transform plugin.
-- we automatically `Object.assign` the `state` on the class
+where references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel transform plugin.
 
-and we initialise the class as follows:
+For this case, we automatically `Object.assign` the `state` on the class as follows:
+
 ```javascript
 Object.assign(component,
    {logger, config, context},
