@@ -174,8 +174,12 @@ Nevertheless, a specific component supervisor implementation might be explicitly
 
 TODO: component supervisor implementation to validate that it supports a given component, e.g. one that has declared itself to use "implicit class properties" in its meta module:
 ```yaml
-namespace: //github.com/evanx/component-validator/component-meta-implicit-class-props-0.1.0
+namespace: ex2016/component-meta-implicit-class-props-0.1.0
 ```
+where the supervisor only supports the component if
+- it explicitly supports this particular `namespace` for meta modules
+- otherwise it can require the `namespace` as a module, and request explicit validation of its own `namespace`
+
 
 ### Lifecycle functions
 
