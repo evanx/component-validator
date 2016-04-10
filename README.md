@@ -67,7 +67,7 @@ where the `state` is passed to the constructor also, since the component might c
 
 ES2016 decorators should be supported for validation metadata e.g.:
 ```javascript
-export class HelloComponentconfig {
+export class HelloComponentConfig {
 
       @url
       redis = 'redis://localhost:6379/0';      
