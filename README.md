@@ -72,30 +72,6 @@ This metadata must be loaded by the component supervisor via `require().`
 
 Besides JSON, or some other file format supported by a require hook, it can be a programmable JavaScript module e.g. using `module.exports` or ES6 `export default.`
 
-The component supervisor implementation should validate that it supports a given component. First and foremost, it must validate the "namespace" of the meta data.
-
-For example, consider a component with the following CSON meta module:
-```javascript
-spec: 'component-meta-0.1.0'
-forceSpecName: true
-forceSpecModule: true
-```
-In this case, the supervisor only supports this component if:
-- it explicitly supports this particular `spec`
-- or `forceSpecName` is truthy
-- or `forceSpecModule` is truthy
-
-Otherwise, it must request validation as follows:
-```javascript
-function validateComponentSupervisor(componentMeta, supervisorMeta) {
-   require(componentMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
-   require(supervisorMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
-}
-```
-where the `spec` names should be JS module names, which clearly must be installed if this validation is to succeed. The purpose of these spec modules is to validate if the component and supervisor support each other. If not, one must throw an error.
-
-Note that `forceSpecName` and `forceSpecModule` are typically `undefined` on components, but are intended for temporary override purposes.
-
 
 #### ES2016 decorators
 
@@ -195,6 +171,33 @@ where references to `logger` et al are preprocessed into `this.logger` e.g. via 
 Generally speaking, this proposed transform is dangerous. It assumes that <b>some</b> "special" references are <b>implicitly</b> intended for `this,` where these might be specified in some "meta module."
 
 Nevertheless, a specific component supervisor implementation might be explicitly limited to such "implicit properties" components, which is fine.
+
+
+### Meta module validation
+
+The component supervisor implementation should validate that it supports a given component. First and foremost, it must validate the "namespace" of the meta data.
+
+For example, consider a component with the following CSON meta module:
+```javascript
+spec: 'component-meta-0.1.0'
+forceSpecName: true
+forceSpecModule: true
+```
+In this case, the supervisor only supports this component if:
+- it explicitly supports this particular `spec`
+- or `forceSpecName` is truthy
+- or `forceSpecModule` is truthy
+
+Otherwise, it must request validation as follows:
+```javascript
+function validateComponentSupervisor(componentMeta, supervisorMeta) {
+   require(componentMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
+   require(supervisorMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
+}
+```
+where the `spec` names should be JS module names, which clearly must be installed if this validation is to succeed. The purpose of these spec modules is to validate if the component and supervisor support each other. If not, one must throw an error.
+
+Note that `forceSpecName` and `forceSpecModule` are typically `undefined` on components, but are intended for temporary override purposes.
 
 
 ### Lifecycle functions
