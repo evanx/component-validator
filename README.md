@@ -130,7 +130,7 @@ context:
       type: 'component'
    redisClient:
       optional: true
-      type: 'any'
+      type: 'object'
 ```
 
 Before calling `start(),` the component supervisor must validate the `context` requirements, and initialise all components therein.
