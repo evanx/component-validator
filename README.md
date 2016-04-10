@@ -170,11 +170,11 @@ where references to `logger` et al are preprocessed into `this.logger` e.g. via 
 
 Generally speaking, this proposed transform is dangerous. It assumes that <b>some</b> "special" references are <b>implicitly</b> intended for `this,` where these might be specified in some "meta module."
 
-Nevertheless, a specific component supervisor implementation might favour this custom transform, and so is naturally limited to some such purpose-built components, which is fine.
+Nevertheless, a specific component supervisor implementation might be explicitly limited to such "implicit properties" components, which is fine.
 
-TODO: component supervisor implementation to validate supported component meta e.g.:
+TODO: component supervisor implementation to validate that its supports a component, e.g. one that has declared itself to use "implicit class properties:"
 ```yaml
-namespace: //github.com/evanx/component-validator/component-meta-0.1.0
+namespace: //github.com/evanx/component-validator/component-meta-implicit-class-props-0.1.0
 ```
 
 ### Lifecycle functions
