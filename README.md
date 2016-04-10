@@ -107,9 +107,9 @@ context:
 
 Before calling `start(),` the component supervisor must validate the `context` requirements, and initialise all components therein.
 
-#### declaring state config
+#### Declaring state props
 
-Additionally we might declare the (initial) `state` properties of the class:
+Experimentally speaking, we might declare the (initial) `state` properties of the class:
 ```yaml
 state:
    startedComponents: []
@@ -118,7 +118,7 @@ state:
    startTimestamp: {}
    ended: false
 ```
-In this case, we can preprocess the ES6 class to automatically insert `this.` dereferencing in the source for the declared properties:
+In this case, we might preprocess the ES6 class to automatically insert `this.` dereferencing in the source for the declared properties:
 ```javascript
 await ClassPreprocessor.build(
    componentSourceFile,
@@ -127,6 +127,8 @@ await ClassPreprocessor.build(
    )
 );
 ```
+However generally speaking this is a rather dangerous transform. Therefore class must be implemented such that any references to the declared state props names, are strictly intended for `this.`
+
 and we initialise the class as follows:
 ```javascript
 await component.init(Object.assign(
@@ -135,6 +137,24 @@ await component.init(Object.assign(
 ));
 ```
 where we coalesce the declared `state` props.
+
+Our component class can then be coded as follows:
+```javascript
+export default class HelloComponent {
+   async init() {
+      logger.info('hello', config, Object.keys(context));
+   }
+   async start() {
+      logger.info('system initialised');
+   }
+   async end() {
+      logger.info('goodbye');
+   }
+}
+```
+where:
+- references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel transform plugin.
+- we automatically `Object.assign` the `state` on the class
 
 ### Lifecycle functions
 
