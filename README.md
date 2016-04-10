@@ -128,8 +128,8 @@ Similarly, `context` dependencies should be declared:
 context:
    metrics:
       type: 'component'
-   redisClient:
       optional: true
+   redisClient:
       type: 'object'
 ```
 
