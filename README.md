@@ -146,44 +146,6 @@ state:
 where the component is requiring a reference to its supervisor.
 
 
-#### Optional implicit class properties
-
-Experimentally, to reduce boilerplate in our components, we could preprocess the ES6 class to automatically insert `this` referencing in the source for all `state` properties:
-```javascript
-['config', 'logger', 'metrics', 'context'].concat(
-   Object.keys(state));
-```   
-where `state` includes the key `supervisor` in our the meta module example.
-
-Then our component class can be expressed as follows:
-```javascript
-export default class HelloComponent {
-   async init() {
-      logger.info('hello', config, Object.keys(context));
-   }
-   async start() {
-      metrics.count('start', supervisor.hostname);
-   }
-   async end() {
-      logger.info('goodbye');
-   }
-}
-```
-where references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel plugin.
-
-Generally speaking, this proposed transform is dangerous. It assumes that <b>some</b> "special" references are <b>implicitly</b> intended for `this,` including those declared in some "meta module."
-
-Nevertheless, my planned component supervisor implementation might experimentally support such a custom transform. Therefore a component's meta module should explicitly declare its specification compatibility e.g. in CSON:
-```javascript
-spec: 'component-validator#0.1.0'
-```
-where an `npm` module named `component-validator` should be installed, and export a function `validateComponentSupervisor().` This function must be called to validate a component `spec` for use with a given supervisor spec.
-
-For example, the version number `0.1.0` is extracted from `spec` to validate this legacy version.
-
-Additionally, the supervisor must make special provision for different specs and versions. For example, the supervisor might optionally apply the above-mentioned transform as demanded by a component's spec e.g. `component-validator/implicit#0.1.0`
-
-
 ### Lifecycle functions
 
 The lifecycle functions:
@@ -310,6 +272,48 @@ This lifecycle function is called via `setInterval()` e.g. scheduled by the supe
 where the component can be configured to just `logger.warn()` in the event of an error. This overrides the default behavior, which is system shutdown, as the safest option.
 
 Before the supervisor calls a component's `end()` function, is must first call `clearInterval()` - and later `clearTimeout()` if both are configured.
+
+
+### Optional implicit class properties
+
+Experimentally, to reduce boilerplate in our components, we could preprocess the ES6 class to automatically insert `this` referencing in the source for all `state` properties:
+```javascript
+['config', 'logger', 'metrics', 'context'].concat(
+   Object.keys(state));
+```   
+where `state` includes the key `supervisor` in our the meta module example.
+
+Then our component class can be expressed as follows:
+```javascript
+export default class HelloComponent {
+   async init() {
+      logger.info('hello', config, Object.keys(context));
+   }
+   async start() {
+      metrics.count('start', supervisor.hostname);
+   }
+   async end() {
+      logger.info('goodbye');
+   }
+}
+```
+where references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel plugin.
+
+Generally speaking, this proposed transform is dangerous. It assumes that <b>some</b> "special" references are <b>implicitly</b> intended for `this,` including those declared in some "meta module."
+
+Nevertheless, my planned component supervisor implementation might experimentally support such a custom transform. Therefore a component's meta module should explicitly declare its specification compatibility e.g. in CSON:
+```javascript
+spec: 'component-validator#0.1.0'
+```
+where an `npm` module named `component-validator` should be installed, and export a function `validateComponentSupervisor().` This function must be called to validate a component `spec` for use with a given supervisor spec.
+
+For example, the version number `0.1.0` is extracted from `spec` by this function, to validate this legacy version specifically. The validation module itself could be at any version, but its component validation function should be backwards-compatible insomuch as it correctly validates any legacy component version, for any legacy supervisor version.
+
+Additionally, the supervisor must make special provision for different specs and versions. For example, the supervisor might optionally apply the above-mentioned transform as demanded by a component's spec e.g. `component-validator#0.1.1@icp` where `icp` is a metadata "preset" key to require the `implicit class properties" transform.
+
+Note that the `spec` tag is purposefully compacted into a terse string, since it is a somewhat invasive header in all component meta files.
+
+Every third-party plugin would typically support a certain specification at their time of writing. Therefore `spec` includes the version. Moreover it can tersely specify a "preset," e.g. including a certain transform, that is required to support its variant implementation.
 
 
 ### Meta module validation
