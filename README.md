@@ -83,8 +83,9 @@ forceSpecModule: true
 In this case, the supervisor only supports this component if:
 - it explicitly supports this particular `spec`
 - or `forceSpecName` is truthy
+- or `forceSpecModule` is truthy
 
-Otherwise, unless `forceSpecModule` is truthy, it must request validation as follows:
+Otherwise, it must request validation as follows:
 ```javascript
   require(componentMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
   require(supervisorMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
