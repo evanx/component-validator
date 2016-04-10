@@ -148,14 +148,14 @@ where the component is requiring a reference to its supervisor.
 
 #### Optional implicit class properties
 
-Experimentally speaking, we could preprocess the ES6 class to automatically insert `this` referencing in the source for all `state` properties:
+Experimentally, to reduce boilerplate in our components, we could preprocess the ES6 class to automatically insert `this` referencing in the source for all `state` properties:
 ```javascript
 ['config', 'logger', 'metrics', 'context'].concat(
    Object.keys(state));
 ```   
-where `state` includes `supervisor,` as per the meta module.
+where `state` includes the key `supervisor` in our the meta module example.
 
-Then our component class can be coded as follows:
+Then our component class can be expressed as follows:
 ```javascript
 export default class HelloComponent {
    async init() {
@@ -173,11 +173,11 @@ where references to `logger` et al are preprocessed into `this.logger` e.g. via 
 
 Generally speaking, this proposed transform is dangerous. It assumes that <b>some</b> "special" references are <b>implicitly</b> intended for `this,` including those declared in some "meta module."
 
-Nevertheless, a specific component supervisor implementation might support such a component. Therefore a component's meta module should explicitly declare its specification compatibility e.g. in CSON:
+Nevertheless, a specific component supervisor implementation might support such a custom transform. Therefore a component's meta module should explicitly declare its specification compatibility e.g. in CSON:
 ```javascript
 spec: 'component-validator#1.0.1'
 ```
-where an `npm` module named `meta-implicit-class-properties` should be installed, and it's `package.json` version must be `1.0.1.` This `spec` module must export an object `metaSpec` with a function `validateComponentSupervisor()` to validate its compatibility with a given supervisor spec.
+where an `npm` module named `component-validator` should be installed, and it's `package.json` version must be `1.0.1.` This `spec` module must export a function `validateComponentSupervisor()` to validate its compatibility with a given supervisor spec.
 
 ### Lifecycle functions
 
@@ -309,11 +309,11 @@ Before the supervisor calls a component's `end()` function, is must first call `
 
 ### Meta module validation
 
-The component supervisor implementation should validate that it supports a given component. First and foremost, it must validate the "namespace" of the meta data.
+The component supervisor implementation should validate that it supports a given component. First and foremost, it must validate the `spec` of the meta data.
 
 For example, consider a component with the following CSON meta module:
 ```javascript
-spec: 'component-meta-0.1.0'
+spec: 'component-validator#0.1.0'
 forceSpecName: true
 forceSpecModule: true
 ```
