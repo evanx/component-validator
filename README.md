@@ -72,12 +72,11 @@ This metadata must be loaded by the component supervisor via `require().`
 
 Besides JSON, or some other file format supported by a require hook, it can be a programmable JavaScript module e.g. using `module.exports` or ES6 `export default.`
 
-The component supervisor implementation should validate that it supports a given component. First and foremost, it must validate the "namespace" of the meta data e.g. consider a component with the following meta module:
+The component supervisor implementation should validate that it supports a given component. First and foremost, it must validate the "namespace" of the meta data e.g. consider a component with the following CSON meta module:
 ```javascript
-module.exports = {
-   spec: 'component-meta-0.1.0',
-   forceSpecName: true,
-   forceSpecModule: true,
+spec: 'component-meta-0.1.0'
+forceSpecName: true
+forceSpecModule: true
 ```
 where the supervisor only supports the component if:
 - it explicitly supports this particular `spec`
