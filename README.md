@@ -303,46 +303,33 @@ Generally speaking, this proposed transform is dangerous. It assumes that <b>som
 
 Nevertheless, my planned component supervisor implementation might experimentally support such a custom transform. Therefore a component's meta module should explicitly declare its specification compatibility e.g. in CSON:
 ```javascript
-spec: 'component-validator#0.1.0'
+spec: 'component-validator?icp#0.1.0'
 ```
-where an `npm` module named `component-validator` should be installed, and export a function `validateComponentSupervisor().` This function must be called to validate a component `spec` for use with a given supervisor spec.
+where the `spec` tag is optionally compacted into a terse string incorporating the `module,` `version` and a "preset" key.
 
-For example, the version number `0.1.0` is extracted from `spec` by this function, to validate this legacy version specifically. The validation module itself could be at any version, but its component validation function should be backwards-compatible insomuch as it correctly validates any legacy component version, for any legacy supervisor version.
+For example, the version number `0.1.0` is extracted from `spec` to validate this legacy version specifically. The validation function should be backwards-compatible insomuch as it correctly validates any component spec version, for the given supervisor version.
 
-Additionally, the supervisor must make special provision for different specs and versions. For example, the supervisor might optionally apply the above-mentioned transform as demanded by a component's spec e.g. `component-validator#0.1.1@icp` where `icp` is a metadata "preset" key to require the `implicit class properties" transform.
+A plugin supports a certain specification at the time of its writing. Therefore `spec` includes the version. Moreover it can tersely specify a "preset" to support its variant implementation.
 
-Note that the `spec` tag is purposefully compacted into a terse string, since it is a somewhat invasive header in all component meta files.
-
-Every third-party plugin would typically support a certain specification at their time of writing. Therefore `spec` includes the version. Moreover it can tersely specify a "preset," e.g. including a certain transform, that is required to support its variant implementation.
+The supervisor makes special provision for some specs, version and presets. For example, the supervisor might optionally apply the above-mentioned transform as demanded by a component's metadata spec preset e.g. `icp` for "implicit class properties."
 
 
 ### Meta module validation
 
-The component supervisor implementation should validate that it supports a given component. First and foremost, it must validate the `spec` of the meta data.
-
-For example, consider a component with the following CSON meta module:
+The supervisor validates the component meta `spec` as follows:
 ```javascript
-spec: 'component-validator#0.1.0'
-forceSpecName: true
-forceSpecModule: true
+   if (!config.ignoreSpecName) {
+      if (this.isComponentMetaSpecModule(componentMeta)) {
+         this.validateComponentSupervisor(componentMeta, supervisorMeta);
+      } else if (!supervisorMeta.ignoreSpecModule) {
+         const componentSpecModule = getSpecModule(componentMeta);
+         require(componentSpecModule).validateComponentSupervisor(componentMeta, supervisorMeta);
+      }
+   }
 ```
-In this case, the supervisor only supports this component if:
-- it explicitly supports this particular `spec`
-- or `forceSpecName` is truthy
-- or `forceSpecModule` is truthy
+Otherwise the `spec` should be resolvable to an installed JS module, e.g. by excluding the tailing `#0.1.0/icp` version and preset declaration.
 
-Otherwise, it must request validation as follows:
-```javascript
-function validateComponentSupervisor(componentMeta, supervisorMeta) {
-   require(getSpecModule(componentMeta)).validateComponentSupervisor(componentMeta, supervisorMeta);
-   require(getSpecModule(supervisorMeta)).validateComponentSupervisor(componentMeta, supervisorMeta);
-}
-```
-where the `spec` name should be resolvable to an installed JS module, e.g. by excluding the tailing `#0.1.0` version declaration.
-
-The purpose of these spec modules is to validate if the component and supervisor support each other. If not, at least one must throw an error.
-
-Note that `forceSpecName` and `forceSpecModule` are typically `undefined` on components, but are intended for temporary override purposes.
+Note that `ignoreSpecModule` are typically `undefined` on components, but are intended for temporary override purposes.
 
 
 ### Specification
