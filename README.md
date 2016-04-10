@@ -116,7 +116,7 @@ config:
       max: 30
 ```
 
-Note that the content of the config metadata, and its use for defaulting and validation, are in the scope of the component supervisor implementation.
+Note that the content of the config metadata, and its use for defaulting and validation, are yet to be scoped.
 
 #### Declaring context props
 
