@@ -173,11 +173,12 @@ where references to `logger` et al are preprocessed into `this.logger` e.g. via 
 
 Generally speaking, this proposed transform is dangerous. It assumes that <b>some</b> "special" references are <b>implicitly</b> intended for `this,` including those declared in some "meta module."
 
-Nevertheless, a specific component supervisor implementation might support such a custom transform. Therefore a component's meta module should explicitly declare its specification compatibility e.g. in CSON:
+Nevertheless, my planned component supervisor implementation might experimentally support such a custom transform. Therefore a component's meta module should explicitly declare its specification compatibility e.g. in CSON:
 ```javascript
 spec: 'component-validator#1.0.1'
 ```
 where an `npm` module named `component-validator` should be installed, and it's `package.json` version must be `1.0.1.` This `spec` module must export a function `validateComponentSupervisor()` to validate its compatibility with a given supervisor spec.
+
 
 ### Lifecycle functions
 
@@ -325,11 +326,13 @@ In this case, the supervisor only supports this component if:
 Otherwise, it must request validation as follows:
 ```javascript
 function validateComponentSupervisor(componentMeta, supervisorMeta) {
-   require(componentMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
-   require(supervisorMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
+   require(getSpecModule(componentMeta)).validateComponentSupervisor(componentMeta, supervisorMeta);
+   require(getSpecModule(supervisorMeta)).validateComponentSupervisor(componentMeta, supervisorMeta);
 }
 ```
-where the `spec` names should be JS module names, which clearly must be installed if this validation is to succeed. The purpose of these spec modules is to validate if the component and supervisor support each other. If not, one must throw an error.
+where the `spec` name should be resolvable to an installed JS module, e.g. by excluding the tailing `#0.1.0` version declaration.
+
+The purpose of these spec modules is to validate if the component and supervisor support each other. If not, at least one must throw an error.
 
 Note that `forceSpecName` and `forceSpecModule` are typically `undefined` on components, but are intended for temporary override purposes.
 
