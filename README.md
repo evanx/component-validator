@@ -177,7 +177,7 @@ Nevertheless, my planned component supervisor implementation might experimentall
 ```javascript
 spec: 'component-validator#0.1.0'
 ```
-where an `npm` module named `component-validator` should be installed, and export a function `validateComponentSupervisor().` This function must be called to validate a component `spec` for use with a given supervisor spec. For example, the version number `0.1.0` is extracted from the `spec` to validate this legacy version.
+where an `npm` module named `component-validator` should be installed, and export a function `validateComponentSupervisor().` This function must be called to validate a component `spec` for use with a given supervisor spec. For example, the version number `0.1.0` is extracted from the `spec` to validate this "legacy" version.
 
 
 ### Lifecycle functions
