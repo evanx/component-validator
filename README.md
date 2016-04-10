@@ -159,7 +159,7 @@ export default class HelloComponent {
       logger.info('hello', config, Object.keys(context));
    }
    async start() {
-      logger.info('system initialised',  await supervisor.getRedisTime());
+      metrics.count('start', supervisor.hostname);
    }
    async end() {
       logger.info('goodbye');
