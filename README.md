@@ -170,8 +170,12 @@ where references to `logger` et al are preprocessed into `this.logger` e.g. via 
 
 Generally speaking, this proposed transform is dangerous. It assumes that <b>some</b> "special" references are <b>implicitly</b> intended for `this,` where these might be specified in some "meta module."
 
-Nevertheless, a specific component supervisor implementation might favour this custom transform, and so is limited to some such purpose-built components, which is fine.
+Nevertheless, a specific component supervisor implementation might favour this custom transform, and so is naturally limited to some such purpose-built components, which is fine.
 
+TODO: component implementation to validate supported component from meta:
+```yaml
+namespace: //github.com/evanx/component-validator
+```
 
 ### Lifecycle functions
 
