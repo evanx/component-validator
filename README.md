@@ -68,9 +68,9 @@ where the `state` is passed to the constructor also, since the component might c
 
 Each component should be accompanied by a "meta module," which declares invariants of the component.
 
-This is loaded by the component supervisor via `require().`
+This must be loaded by the component supervisor via `require().`
 
-As such it can be a file, or JavaScript module e.g. with `module.exports` or ES6 `export default.`
+Besides JSON, YAML, CSON or some other file format, it can be a programmable JavaScript module e.g. using `module.exports` or ES6 `export default.`
 
 
 #### ES2016 decorators
