@@ -90,9 +90,10 @@ Otherwise, it must request validation as follows:
   require(componentMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
   require(supervisorMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
 ```
-where the `spec` names should be JS module names, which must be installed if this validation is to succeed.
+where the `spec` names should be JS module names, which must be installed if this validation is to succeed. The purpose of these spec modules is to validate if the component and supervisor support each other. If not, one must throw an error.
 
 Note that `forceSpecName` and `forceSpecModule` are typically `undefined` on components, but are intended for temporary override purposes.
+
 
 #### ES2016 decorators
 
