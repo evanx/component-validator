@@ -129,15 +129,6 @@ await ClassPreprocessor.build(
 ```
 However generally speaking this is a rather dangerous transform. Therefore class must be implemented such that any references to the declared state props names, are strictly intended for `this.`
 
-and we initialise the class as follows:
-```javascript
-await component.init(Object.assign(
-   {logger, config, context},
-   componentMeta.state
-));
-```
-where we coalesce the declared `state` props.
-
 Our component class can then be coded as follows:
 ```javascript
 export default class HelloComponent {
@@ -155,6 +146,16 @@ export default class HelloComponent {
 where:
 - references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel transform plugin.
 - we automatically `Object.assign` the `state` on the class
+
+and we initialise the class as follows:
+```javascript
+Object.assign(component,
+   {logger, config, context},
+   componentMeta.state
+);
+```
+where we coalesce the declared `state` props.
+
 
 ### Lifecycle functions
 
