@@ -276,7 +276,7 @@ Before the supervisor calls a component's `end()` function, is must first call `
 
 ### Optional implicit class properties
 
-Experimentally, to reduce boilerplate in our components, we could preprocess the ES6 class to automatically insert `this` referencing in the source for all `state` properties:
+Experimentally, to reduce boilerplate in our components, we could preprocess the ES6 class to automatically insert `this` referencing for all of its `state` properties:
 ```javascript
 ['config', 'logger', 'metrics', 'context'].concat(
    Object.keys(state));
@@ -303,13 +303,13 @@ Generally speaking, this proposed transform is dangerous. It assumes that <b>som
 
 Nevertheless, my planned component supervisor implementation might experimentally support such a custom transform. Therefore a component's meta module should explicitly declare its specification compatibility e.g. in CSON:
 ```javascript
-spec: 'component-validator?icp#0.1.0'
+spec: 'component-validator/icp#0.1.0'
 ```
 where the `spec` tag is optionally compacted into a terse string incorporating the `module,` `version` and a "preset" key.
 
 For example, the version number `0.1.0` is extracted from `spec` to validate this legacy version specifically. The validation function should be backwards-compatible insomuch as it correctly validates any component spec version, for the given supervisor version.
 
-A plugin supports a certain specification at the time of its writing. Therefore `spec` includes the version. Moreover it can tersely specify a "preset" to support its variant implementation.
+A plugin supports a certain specification at the time of its writing. Therefore `spec` must clearly include the version. Moreover it can tersely specify a "preset" which is required to support its variant implementation.
 
 The supervisor makes special provision for some specs, version and presets. For example, the supervisor might optionally apply the above-mentioned transform as demanded by a component's metadata spec preset e.g. `icp` for "implicit class properties."
 
@@ -318,18 +318,20 @@ The supervisor makes special provision for some specs, version and presets. For 
 
 The supervisor validates the component meta `spec` as follows:
 ```javascript
-   if (!config.ignoreSpecName) {
-      if (this.isComponentMetaSpecModule(componentMeta)) {
-         this.validateComponentSupervisor(componentMeta, supervisorMeta);
-      } else if (!supervisorMeta.ignoreSpecModule) {
-         const componentSpecModule = getSpecModule(componentMeta);
-         require(componentSpecModule).validateComponentSupervisor(componentMeta, supervisorMeta);
-      }
+   if (config.ignoreSpecName) {
+      metrics.warn('ignoreSpecName', componentMeta.spec, supervisorMeta.spec);      
+   } else if (isComponentMetaSpecModule(componentMeta)) {
+      validateComponentSupervisor(componentMeta, supervisorMeta);
+   } else if (config.ignoreSpecModule) {
+      metrics.warn('ignoreSpecModule', componentMeta.spec, supervisorMeta.spec);      
+   } else {
+      const componentSpecModule = getSpecModule(componentMeta);
+      require(componentSpecModule).validateComponentSupervisor(componentMeta, supervisorMeta);
    }
 ```
-Otherwise the `spec` should be resolvable to an installed JS module, e.g. by excluding the tailing `#0.1.0/icp` version and preset declaration.
+where `spec` should be resolvable to an installed JS module, e.g. by excluding the tailing `#0.1.0` version.
 
-Note that `ignoreSpecModule` are typically `undefined` on components, but are intended for temporary override purposes.
+Note that `ignoreSpecName` and `ignoreSpecModule` are typically falsey, but sometimes useful to temporarily disable `spec` validation.
 
 
 ### Specification
