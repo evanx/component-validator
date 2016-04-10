@@ -173,33 +173,6 @@ Generally speaking, this proposed transform is dangerous. It assumes that <b>som
 Nevertheless, a specific component supervisor implementation might be explicitly limited to such "implicit properties" components, which is fine. It should validate its components e.g. to detect the misconfiguration of third-party components that are not supported by the supervisor.
 
 
-### Meta module validation
-
-The component supervisor implementation should validate that it supports a given component. First and foremost, it must validate the "namespace" of the meta data.
-
-For example, consider a component with the following CSON meta module:
-```javascript
-spec: 'component-meta-0.1.0'
-forceSpecName: true
-forceSpecModule: true
-```
-In this case, the supervisor only supports this component if:
-- it explicitly supports this particular `spec`
-- or `forceSpecName` is truthy
-- or `forceSpecModule` is truthy
-
-Otherwise, it must request validation as follows:
-```javascript
-function validateComponentSupervisor(componentMeta, supervisorMeta) {
-   require(componentMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
-   require(supervisorMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
-}
-```
-where the `spec` names should be JS module names, which clearly must be installed if this validation is to succeed. The purpose of these spec modules is to validate if the component and supervisor support each other. If not, one must throw an error.
-
-Note that `forceSpecName` and `forceSpecModule` are typically `undefined` on components, but are intended for temporary override purposes.
-
-
 ### Lifecycle functions
 
 The lifecycle functions:
@@ -326,6 +299,33 @@ This lifecycle function is called via `setInterval()` e.g. scheduled by the supe
 where the component can be configured to just `logger.warn()` in the event of an error. This overrides the default behavior, which is system shutdown, as the safest option.
 
 Before the supervisor calls a component's `end()` function, is must first call `clearInterval()` - and later `clearTimeout()` if both are configured.
+
+
+### Meta module validation
+
+The component supervisor implementation should validate that it supports a given component. First and foremost, it must validate the "namespace" of the meta data.
+
+For example, consider a component with the following CSON meta module:
+```javascript
+spec: 'component-meta-0.1.0'
+forceSpecName: true
+forceSpecModule: true
+```
+In this case, the supervisor only supports this component if:
+- it explicitly supports this particular `spec`
+- or `forceSpecName` is truthy
+- or `forceSpecModule` is truthy
+
+Otherwise, it must request validation as follows:
+```javascript
+function validateComponentSupervisor(componentMeta, supervisorMeta) {
+   require(componentMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
+   require(supervisorMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
+}
+```
+where the `spec` names should be JS module names, which clearly must be installed if this validation is to succeed. The purpose of these spec modules is to validate if the component and supervisor support each other. If not, one must throw an error.
+
+Note that `forceSpecName` and `forceSpecModule` are typically `undefined` on components, but are intended for temporary override purposes.
 
 
 ### Specification
