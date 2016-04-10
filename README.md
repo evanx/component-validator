@@ -170,7 +170,7 @@ where references to `logger` et al are preprocessed into `this.logger` e.g. via 
 
 Generally speaking, this proposed transform is dangerous. It assumes that <b>some</b> "special" references are <b>implicitly</b> intended for `this,` where these might be specified in some "meta module."
 
-Nevertheless, a specific component supervisor implementation might be explicitly limited to such "implicit properties" components, which is fine. It should validate its components e.g. to detect the misconfiguration of components that are third-party plugins that in fact are not supported.
+Nevertheless, a specific component supervisor implementation might be explicitly limited to such "implicit properties" components, which is fine. It should validate its components e.g. to detect the misconfiguration of components that are third-party plugins that in fact are not supported by the supervisor.
 
 
 ### Meta module validation
