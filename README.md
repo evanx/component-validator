@@ -115,7 +115,7 @@ state:
    redisClient:
       type: 'object'
 ```
-Experimentally speaking, we could preprocess the ES6 class to automatically insert `this` referencing in the source for the declared `state` properties, namely:
+Experimentally speaking, we could preprocess the ES6 class to automatically insert `this` referencing in the source for all `state` properties:
 ```javascript
 ['config', 'logger', 'context'].concat(
    Object.keys(state));
