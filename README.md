@@ -309,9 +309,9 @@ where the `spec` tag is optionally compacted into a terse string incorporating t
 
 For example, the version number `0.1.0` is extracted from `spec` to validate this legacy version specifically. The validation function should be backwards-compatible insomuch as it correctly validates any component spec version, for the given supervisor version.
 
-A plugin supports a certain specification at the time of its writing. Therefore `spec` must clearly include the version. Moreover it can tersely specify a "preset" which is required to support its variant implementation.
+A plugin conforms to a certain specification at the time of its writing. Therefore `spec` must clearly include the version. Moreover it can tersely specify a "preset" which is required to support its variant implementation.
 
-The supervisor makes special provision for some specs, version and presets. For example, the supervisor might optionally apply the above-mentioned transform as demanded by a component's metadata spec preset e.g. `icp` for "implicit class properties."
+The supervisor makes special provision for some specs, version and presets. For example, the supervisor might optionally apply the above-mentioned transform as required by the component's `spec` preset e.g. `icp` for "implicit class properties."
 
 
 ### Meta module validation
