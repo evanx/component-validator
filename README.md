@@ -179,7 +179,7 @@ spec: 'component-validator#0.1.0'
 ```
 where an `npm` module named `component-validator` should be installed, and export a function `validateComponentSupervisor().` This function must be called to validate a component `spec` for use with a given supervisor spec.
 
-For example, the version number `0.1.0` is extracted from the `spec` to validate this legacy version. 
+For example, the version number `0.1.0` is extracted from `spec` to validate this legacy version. 
 
 Additionally, the supervisor must make special provision for different specs and versions. For example, the supervisor might optionally apply the above-mentioned transform as demanded by a component's spec.
 
