@@ -143,7 +143,9 @@ state:
    supervisor:
       type: 'supervisor'
 ```
-where the component is requiring a reference to its supervisor.
+where the component is requiring a reference to its supervisor in its `state.`
+
+Further below, we propose an experimental "implicit class properties" preset, specifically for `state` props. In that case, for the sake of terseness, we might prefer certain key dependencies in `state` rather than `state.context.`
 
 
 ### Lifecycle functions
