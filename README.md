@@ -113,7 +113,7 @@ Experimentally speaking, we might declare additional required `state` properties
 ```yaml
 state:
    redisClient:
-      optional: false
+      type: 'object'
 ```
 In this case, we could preprocess the ES6 class to automatically insert `this` referencing in the source for the declared `state` properties, namely:
 ```javascript
