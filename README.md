@@ -115,9 +115,12 @@ state:
    redisClient:
       optional: false
 ```
-In this case, we could preprocess the ES6 class to automatically insert `this` referencing in the source for the declared properties:
-
-Our component class can then be coded as follows:
+In this case, we could preprocess the ES6 class to automatically insert `this` referencing in the source for the declared `state` properties, namely:
+```javascript
+['config', 'logger', 'context'].concat(
+   Object.keys(state));
+```   
+Then our component class can be coded as follows:
 ```javascript
 export default class HelloComponent {
    async init() {
@@ -131,11 +134,7 @@ export default class HelloComponent {
    }
 }
 ```
-where references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel plugin, which transforms `Object.keys(state)` references:
-```javascript
-['config', 'logger', 'context'].concat(
-      Object.keys(componentMeta.state));
-```
+where references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel plugin.
 
 Generally speaking, this proposed transform is a dangerously fragile. Therefore the class must be implemented such that all references to the declared state props names, are strictly intended for `this.`
 
