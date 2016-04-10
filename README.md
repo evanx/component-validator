@@ -72,25 +72,25 @@ This metadata must be loaded by the component supervisor via `require().`
 
 Besides JSON, or some other file format supported by a require hook, it can be a programmable JavaScript module e.g. using `module.exports` or ES6 `export default.`
 
-The component supervisor implementation to validate that it supports a given component. First and foremost, it must validate the "namespace" of the meta data e.g. consider a component with the following meta module:
+The component supervisor implementation should validate that it supports a given component. First and foremost, it must validate the "namespace" of the meta data e.g. consider a component with the following meta module:
 ```javascript
 module.exports = {
    spec: 'component-meta-0.1.0',
-   forceSpec: true,
-   invalidSpec: true,
+   forceSpecName: true,
+   forceSpecModule: true,
 ```
 where the supervisor only supports the component if:
 - it explicitly supports this particular `spec`
-- or `forceSpec` is truthy
+- or `forceSpecName` is truthy
 
-Otherwise, if `invalidSpec` is falsey, it must request validation as follows:
+Otherwise, if `forceSpecModule` is falsey, it must request validation as follows:
 ```javascript
-  require(componentMeta.spec).validateCombo(componentMeta, supervisorMeta);
-  require(supervisorMeta.spec).validateCombo(componentMeta, supervisorMeta);
+  require(componentMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
+  require(supervisorMeta.spec).validateComponentSupervisor(componentMeta, supervisorMeta);
 ```
 where the `spec` names should be JS module names, which must be installed if this validation is to succeed.
 
-Note that `forceSpec` and `invalidSpec` are typically `undefined` on components, but are provided for emergency override purposes.
+Note that `forceSpecName` and `forceSpecModule` are typically `undefined` on components, but are intended for temporary override purposes.
 
 #### ES2016 decorators
 
