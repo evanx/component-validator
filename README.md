@@ -92,7 +92,7 @@ export default class MyRedisComponentConfig {
 ```
 where these decorators must be used by the component supervisor to default and validate the `config` for this component.
 
-<i>Out of scrope: The specification and implementation of these decorators should be provided by the component supervisor implementation.</i>
+<i>Out of scope: The specification and implementation of these decorators should be provided by the component supervisor implementation.</i>
 
 
 #### Declaring config props
