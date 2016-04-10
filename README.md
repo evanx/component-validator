@@ -120,6 +120,13 @@ state:
 ```
 In this case, we could preprocess the ES6 class to automatically insert `this` referencing in the source for the declared properties:
 
+```javascript
+const declaredStateKeys =
+   ['config', 'logger', 'context'].concat(
+      Object.keys(componentMeta.state)
+   );
+```
+
 Our component class can then be coded as follows:
 ```javascript
 export default class HelloComponent {
@@ -136,12 +143,6 @@ export default class HelloComponent {
 ```
 where references to `logger` et al are preprocessed into `this.logger` e.g. via a Babel transform plugin.
 
-```javascript
-const declaredStateKeys =
-   ['config', 'logger', 'context'].concat(
-      Object.keys(componentMeta.state)
-   );
-```
 Generally speaking, this is a rather dangerous transform. Therefore the class must be implemented such that all references to the declared state props names, are strictly intended for `this.`
 
 Also to support the above example class implementation, we automatically `Object.assign` the `state` on the class as follows:
