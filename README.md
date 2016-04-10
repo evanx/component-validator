@@ -63,46 +63,71 @@ export async function initComponent(componentClass, state) {
 ```
 where the `state` is passed to the constructor also, since the component might choose to perform some initialisation in its constructor. The `init()` function is effectively a complementary "promisified constructor."
 
-### Decorators
+
+### Meta modules
+
+Each component should be accompanied by a "meta module," which declares invariants of the component.
+
+This is loaded by the component supervisor via `require().`
+
+As such it can be a file, or JavaScript module e.g. with `module.exports` or ES6 `export default.`
+
+
+#### ES2016 decorators
 
 ES2016 decorators should be supported for validation metadata e.g.:
 ```javascript
-export class HelloComponentConfig {
+export default class MyRedisComponentConfig {
 
       @url
       redis = 'redis://localhost:6379/0';      
 
-      @seconds @min(1) @max(30)
-      started;
-}
-```
+      @string
+      message = 'Hello, Redis';
 
-Equivalently via YAML e.g. `HelloClass.config.yaml:`
+      @seconds @min(1) @max(30)
+      timeout = undefined;
+}
+
+```
+where these decorators should be used by the component supervisor to default and validate the `config` for this component.
+
+
+#### Declaring config props
+
+We might favour CSON for meta modules. Then the supervisor must register a CSON "require hook."
+
+For example, we declare our `config` metadata in `MyRedisComponent.meta.cson:`
+
 ```yaml
 config:
    redis:
-      type: url
-      defaultValue: redis://localhost:6379/0
+      type: 'url'
+      defaultValue: 'redis://localhost:6379/0'
    message:
-      defaultValue: Hello, World
+      value: 'Hello, Redis'
    started:
-      type: timestamp
+      type: 'timestamp'
    timeout:
-      type: interval
-      unit: seconds
+      type: 'interval'
+      unit: 'seconds'
       defaultValue: 10
       min: 1
       max: 30
 ```
-where these decorators are used by the component supervisor to default and validate config.
+
+Note that the content of the config metadata, and its use for defaulting and validation, are in the scope of the component supervisor implementation.
+
+#### Declaring context props
 
 Similarly, `context` dependencies should be declared:
 ```yaml
 context:
    metrics:
-      type: component
+      type: 'component'
    redisClient:
       optional: true
+      type: 'any'
 ```
 
 Before calling `start(),` the component supervisor must validate the `context` requirements, and initialise all components therein.
@@ -112,9 +137,11 @@ Before calling `start(),` the component supervisor must validate the `context` r
 We might declare additional required `state` properties for a class:
 ```yaml
 state:
-   redisClient:
-      type: 'object'
+   supervisor:
+      type: 'supervisor'
 ```
+where the component is requiring a `supervisor` reference to its supervisor.
+
 Experimentally speaking, we could preprocess the ES6 class to automatically insert `this` referencing in the source for all `state` properties:
 ```javascript
 ['config', 'logger', 'context'].concat(
