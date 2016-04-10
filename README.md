@@ -109,7 +109,7 @@ Before calling `start(),` the component supervisor must validate the `context` r
 
 #### Declaring state props
 
-Experimentally speaking, we might declare the (initial) `state` properties of the class:
+Experimentally speaking, we might declare additional required `state` properties for a class:
 ```yaml
 state:
    redisClient:
