@@ -403,30 +403,6 @@ async initComponent(component, name) {
 This has been refactored in a subsequent similar project: https://github.com/evanx/hbridge-expressjs-redis/blob/master/lib/Supervisor.js
 
 
-#### Redex
-
-See code: https://github.com/evanx/redex/blob/master/lib/Redex.js
-
-Incidently, Redex calls its components "processors," because they handle messages.
-
-```javascript
-async endProcessors() {
-   for (let processorName of [...this.initedProcessorKeys]) {
-      let processor = this.processorMap.get(processorName);
-      if (lodash.isFunction(processor.end)) {
-         logger.info('end', processorName);
-         try {
-            await processor.end();
-         } catch (err) {
-            logger.error(err, 'end', processorName);
-         }
-      } else {
-         logger.warn('end', processorName);
-      }
-   }
-}
-```
-
 #### Chronica
 
 See its `ComponentFactory` documentation: https://github.com/evanx/chronica/blob/master/lib/ComponentFactory.md
@@ -449,6 +425,31 @@ async function initComponents() {
       state.configs.set(name, config);
       let component = createComponent(name, config, componentClassFile);
       state.components[name] = component;
+   }
+}
+```
+
+
+#### Redex
+
+See code: https://github.com/evanx/redex/blob/master/lib/Redex.js
+
+Incidently, Redex calls its components "processors," because they handle messages.
+
+```javascript
+async endProcessors() {
+   for (let processorName of [...this.initedProcessorKeys]) {
+      let processor = this.processorMap.get(processorName);
+      if (lodash.isFunction(processor.end)) {
+         logger.info('end', processorName);
+         try {
+            await processor.end();
+         } catch (err) {
+            logger.error(err, 'end', processorName);
+         }
+      } else {
+         logger.warn('end', processorName);
+      }
    }
 }
 ```
