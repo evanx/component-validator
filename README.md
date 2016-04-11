@@ -379,6 +379,7 @@ Note that the component supervisor implementation is yet to be implemented as pe
 - https://github.com/evanx/redex
 
 
+
 #### mpush
 
 See the `Service` supervisor code: https://github.com/evanx/mpush-redis/blob/master/src/Service.js
@@ -398,6 +399,9 @@ async initComponent(component, name) {
    this.components[name] = component;
 }
 ```
+
+This has been refactored in a subsequent similar project: https://github.com/evanx/hbridge-expressjs-redis/blob/master/lib/Supervisor.js
+
 
 #### Redex
 
