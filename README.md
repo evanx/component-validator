@@ -11,8 +11,7 @@ This component model must support:
 - ES2016 async/await
 - reduced boilerplate code
 
-See the reference implementation for a "Supervisor" that manages components of this spec: 
-https://github.com/evanx/libv/blob/master/Supervisor.js
+See the reference implementation for a "Supervisor" that manages components of this spec: https://github.com/evanx/libv
 
 
 ###### Class example
