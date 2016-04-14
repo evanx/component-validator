@@ -12,7 +12,6 @@ This component model must support:
 - reduced boilerplate code
 
 A reference implementation for a "Supervisor" that manages components of this spec is under development: 
-
 https://github.com/evanx/libv/blob/master/Supervisor.js
 
 
