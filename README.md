@@ -11,6 +11,7 @@ This component model must support:
 - ES2016 async/await
 - reduced boilerplate code
 
+A reference implementation for a "Supervisor" that manages components of this spec: https://github.com/evanx/libv/blob/master/Supervisor.js
 
 ###### Class example
 
@@ -379,28 +380,9 @@ Note that the component supervisor implementation is yet to be implemented as pe
 - https://github.com/evanx/redex
 
 
+The `mpush` implementation has been refactored into the following implementation, which will converge with this spec:
 
-#### mpush
-
-See the `Service` supervisor code: https://github.com/evanx/mpush-redis/blob/master/src/Service.js
-
-```javascript
-async initComponent(component, name) {
-   assert(name, 'component name');
-   logger.info('initComponent', name);
-   await component.init({
-      name: name,
-      logger: this.createLogger(name),
-      config: this.config,
-      components: this.components,
-      context: this
-   });
-   this.initedComponents.push(component);
-   this.components[name] = component;
-}
-```
-
-This has been refactored in a subsequent similar project: https://github.com/evanx/hbridge-expressjs-redis/blob/master/lib/Supervisor.js
+https://github.com/evanx/libv/blob/master/Supervisor.js
 
 
 #### Chronica
