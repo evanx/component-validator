@@ -219,7 +219,7 @@ The supervisor might implement this as follows:
          assert(typeof component.scheduledTimeout === 'function', 'scheduledTimeout: ' + name);
          this.scheduledTimeouts[name] = setTimeout(async () => {
             try {
-               async component.scheduledTimeout();
+               await component.scheduledTimeout();
             } catch (err) {               
                if (config.scheduledTimeoutWarn) {
                   logger.warn(err, component.name, config);
@@ -258,7 +258,7 @@ This lifecycle function is called via `setInterval()` e.g. scheduled by the supe
          assert(typeof component.scheduledInterval === 'function', 'scheduledInterval: ' + name);
          this.scheduledIntervals[name] = setInterval(async () => {
             try {
-               async component.scheduledInterval();
+               await component.scheduledInterval();
             } catch (err) {
                if (config.scheduledIntervalWarn) {
                   logger.warn(err, component.name, config);
