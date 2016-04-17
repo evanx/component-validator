@@ -95,14 +95,14 @@ export default class MyRedisComponentConfig {
 ```
 where these decorators must be used by the component supervisor to default and validate the `config` for this component.
 
-TODO (Supervisor): specify these decorators
+TODO (Supervisor): specify these decorators.
 
 
 #### Declaring config props
 
-We might favour CSON for meta modules. Then the supervisor must register a CSON "require hook."
+We might favour CSON for meta modules. (Then the supervisor must register a CSON "require hook.")
 
-For example, we declare our `config` metadata in `MyRedisComponent.meta.cson:`
+For example, we declare our `config` metadata in `MyRedisComponent.cson:`
 
 ```yaml
 config:
@@ -121,7 +121,7 @@ config:
       max: 30
 ```
 
-TODO (Supervisor): specify the content of the config metadata for defaulting and validation
+TODO (Supervisor): specify the content of the config metadata for defaulting and validation.
 
 
 #### Declaring context props
@@ -148,7 +148,7 @@ state:
 ```
 where the component is requiring a reference to its supervisor in its `state.`
 
-Further below, we propose an experimental "implicit class properties" preset, specifically for `state` props. In that case, for the sake of terseness, we might prefer certain key dependencies in `state` rather than `state.context.`
+Further below, we discuss an experimental "implicit class properties" transform where `this.` is implicit specifically for our `state` properties. In that case, we might prefer certain key dependencies in `state` rather than `state.context.`
 
 
 ### Lifecycle functions
@@ -281,7 +281,7 @@ Before the supervisor calls a component's `end()` function, is must first call `
 
 ### Optional implicit class properties
 
-Experimentally, to reduce `this.` boilerplate in components, we shold preprocess their ES6 class to automatically insert `this.` referencing for all of its "state" properties:
+Experimentally, to reduce `this.` boilerplate in components, we should preprocess their ES6 class to automatically insert `this.` referencing for all of its "state" properties:
 ```javascript
 ['config', 'logger', 'metrics', 'context'].concat(
    Object.keys(state));
